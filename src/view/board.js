@@ -1,3 +1,1 @@
-export const createBoardTemplate = () => {
-  return `<section class="films"></section>`;
-};
+export const createBoardTemplate = () => `<section class="films"></section>`;

@@ -1,5 +1,5 @@
-export const createMenuTemplate = () => {
-  return `<nav class="main-navigation">
+export const createMenuTemplate = () => (
+  `<nav class="main-navigation">
     <div class="main-navigation__items">
       <a
         href="#all"
@@ -22,5 +22,5 @@ export const createMenuTemplate = () => {
       >Favorites <span class="main-navigation__item-count">8</span></a>
     </div>
     <a href="#stats" class="main-navigation__additional">Stats</a>
-  </nav>`;
-};
+  </nav>`
+);

@@ -1,5 +1,5 @@
-export const createUserProfileTemplate = () => {
-  return `<section class="header__profile profile">
+export const createUserProfileTemplate = () => (
+  `<section class="header__profile profile">
     <p class="profile__rating">Movie Buff</p>
     <img
       class="profile__avatar"
@@ -8,5 +8,5 @@ export const createUserProfileTemplate = () => {
       width="35"
       height="35"
     >
-  </section>`;
-};
+  </section>`
+);

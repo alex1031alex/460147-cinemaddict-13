@@ -1,5 +1,5 @@
-export const createSortTemplate = () => {
-  return `<ul class="sort">
+export const createSortTemplate = () => (
+  `<ul class="sort">
     <li>
       <a href="#" class="sort__button sort__button--active"
       >Sort by default</a>
@@ -10,5 +10,5 @@ export const createSortTemplate = () => {
     <li>
       <a href="#" class="sort__button">Sort by rating</a>
     </li>
-  </ul>`;
-};
+  </ul>`
+);
