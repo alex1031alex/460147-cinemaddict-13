@@ -13,9 +13,11 @@ import {generateMovie} from "./mock/movie.js";
 import {getComments} from "./mock/comment.js";
 
 const MOVIE_COUNT = 23;
+const MOVIE_COUNT_PER_STEP = 5;
 const EXTRA_MOVIE_COUNT = 2;
 
 const movies = new Array(MOVIE_COUNT).fill().map(generateMovie);
+// console.log(movies);
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -40,7 +42,7 @@ const mainList = board.querySelector(`.films-list .films-list__container`);
 const topRatedList = board.querySelector(`.films-list--rated .films-list__container`);
 const mostCommentedList = board.querySelector(`.films-list--commented .films-list__container`);
 
-for (let i = 0; i < MOVIE_COUNT; i++) {
+for (let i = 0; i < MOVIE_COUNT_PER_STEP; i++) {
   render(mainList, createMovieTemplate(movies[i]), `beforeend`);
 
   if (i < EXTRA_MOVIE_COUNT) {
