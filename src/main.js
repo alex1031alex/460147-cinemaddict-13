@@ -41,14 +41,14 @@ const topRatedList = board.querySelector(`.films-list--rated .films-list__contai
 const mostCommentedList = board.querySelector(`.films-list--commented .films-list__container`);
 
 for (let i = 0; i < MOVIE_COUNT; i++) {
-  render(mainList, createMovieTemplate(), `beforeend`);
+  render(mainList, createMovieTemplate(movies[i]), `beforeend`);
 
   if (i < EXTRA_MOVIE_COUNT) {
-    render(topRatedList, createMovieTemplate(), `beforeend`);
-    render(mostCommentedList, createMovieTemplate(), `beforeend`);
+    render(topRatedList, createMovieTemplate(movies[i]), `beforeend`);
+    render(mostCommentedList, createMovieTemplate(movies[i]), `beforeend`);
   }
 }
 
 render(mainList, createShowMoreButtonTemplate(), `afterend`);
-render(siteMain, createPopupTemplate(), `beforeend`);
+render(siteMain, createPopupTemplate(movies[0], getComments(movies[0].id)), `beforeend`);
 render(siteFooter, createCounterTemplate(), `beforeend`);
