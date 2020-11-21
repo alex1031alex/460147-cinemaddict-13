@@ -1,4 +1,5 @@
 import {nanoid} from 'nanoid';
+import {getRandomInteger, getRandomItem} from "../utils.js";
 
 const GenresCount = {
   MIN: 1,
@@ -13,16 +14,6 @@ const WritersCount = {
 const ActorsCount = {
   MIN: 3,
   MAX: 5
-};
-
-const getRandomInteger = (min = 0, max = 1) => {
-  return Math.floor(min + Math.random() * (max + 1 - min));
-};
-
-const getRandomItem = (array) => {
-  const randomIndex = getRandomInteger(0, array.length - 1);
-
-  return array[randomIndex];
 };
 
 const genres = [
