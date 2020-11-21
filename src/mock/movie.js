@@ -1,5 +1,6 @@
 import {nanoid} from 'nanoid';
 import {getRandomInteger, getRandomItem} from "../utils.js";
+import {generateComment} from "./comment.js";
 
 const GenresCount = {
   MIN: 1,
@@ -152,13 +153,29 @@ const generateRuntime = () => {
   return getRandomInteger(MIN_RUNTIME, MAX_RUNTIME);
 };
 
+const generateComments = (movieId) => {
+  const MIN_COMMENTS_COUNT = 0;
+  const MAX_COMMENTS_COUNT = 5;
+
+  const commentsCount = getRandomInteger(
+      MIN_COMMENTS_COUNT,
+      MAX_COMMENTS_COUNT
+  );
+
+  const comments = new Array(commentsCount)
+    .fill()
+    .map(() => generateComment(movieId));
+
+  return comments;
+};
+
 const generateMovie = () => {
   const title = getRandomItem(titles);
-
   const releaseDate = generateReleaseDate();
+  const id = nanoid();
 
   return {
-    id: nanoid(),
+    id,
     title,
     poster: getRandomItem(posters),
     description: generateDescription(),
@@ -176,7 +193,8 @@ const generateMovie = () => {
       isAtWatchlist: Boolean(getRandomInteger(0, 1)),
       isWatched: Boolean(getRandomInteger(0, 1)),
       isFavorite: Boolean(getRandomInteger(0, 1)),
-    }
+    },
+    comments: generateComments(id)
   };
 };
 

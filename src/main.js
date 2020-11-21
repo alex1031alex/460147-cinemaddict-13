@@ -9,9 +9,13 @@ import {createShowMoreButtonTemplate} from "./view/show-more-button.js";
 import {createMovieTemplate} from "./view/movie.js";
 import {createCounterTemplate} from "./view/counter.js";
 import {createPopupTemplate} from "./view/popup.js";
+import {generateMovie} from "./mock/movie.js";
+import {getComments} from "./mock/comment.js";
 
-const FILM_COUNT = 5;
-const EXTRA_FILM_COUNT = 2;
+const MOVIE_COUNT = 23;
+const EXTRA_MOVIE_COUNT = 2;
+
+const movies = new Array(MOVIE_COUNT).fill().map(generateMovie);
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -36,10 +40,10 @@ const mainList = board.querySelector(`.films-list .films-list__container`);
 const topRatedList = board.querySelector(`.films-list--rated .films-list__container`);
 const mostCommentedList = board.querySelector(`.films-list--commented .films-list__container`);
 
-for (let i = 0; i < FILM_COUNT; i++) {
+for (let i = 0; i < MOVIE_COUNT; i++) {
   render(mainList, createMovieTemplate(), `beforeend`);
 
-  if (i < EXTRA_FILM_COUNT) {
+  if (i < EXTRA_MOVIE_COUNT) {
     render(topRatedList, createMovieTemplate(), `beforeend`);
     render(mostCommentedList, createMovieTemplate(), `beforeend`);
   }
