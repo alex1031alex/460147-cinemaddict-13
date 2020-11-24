@@ -9,6 +9,7 @@ import {createShowMoreButtonTemplate} from "./view/show-more-button.js";
 import {createMovieTemplate} from "./view/movie.js";
 import {createCounterTemplate} from "./view/counter.js";
 import {createPopupTemplate} from "./view/popup.js";
+import {createFilterTemplate} from "./view/filter.js";
 import {generateMovie} from "./mock/movie.js";
 import {getComments} from "./mock/comment.js";
 
@@ -28,6 +29,10 @@ const siteFooter = document.querySelector(`.footer`);
 
 render(siteHeader, createUserProfileTemplate(), `beforeend`);
 render(siteMain, createMenuTemplate(), `beforeend`);
+
+const siteNavigation = siteMain.querySelector(`.main-navigation`);
+
+render(siteNavigation, createFilterTemplate(), `afterbegin`);
 render(siteMain, createSortTemplate(), `beforeend`);
 render(siteMain, createBoardTemplate(), `beforeend`);
 
@@ -51,5 +56,5 @@ for (let i = 0; i < MOVIE_COUNT_PER_STEP; i++) {
 }
 
 render(mainList, createShowMoreButtonTemplate(), `afterend`);
-render(siteMain, createPopupTemplate(movies[0], getComments(movies[0].id)), `beforeend`);
+// render(siteMain, createPopupTemplate(movies[0], getComments(movies[0].id)), `beforeend`);
 render(siteFooter, createCounterTemplate(), `beforeend`);
