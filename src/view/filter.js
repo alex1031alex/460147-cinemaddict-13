@@ -1,9 +1,4 @@
-const FilterName = {
-  ALL_MOVIES: `All movies`,
-  WATCHLIST: `Watchlist`,
-  HISTORY: `History`,
-  FAVORITES: `Favorites`
-};
+import {FilterName} from "../const.js";
 
 const FILTER_ACTIVE_CLASS_NAME = `main-navigation__item--active`;
 
