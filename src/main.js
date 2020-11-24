@@ -17,7 +17,6 @@ const MOVIE_COUNT_PER_STEP = 5;
 const EXTRA_MOVIE_COUNT = 2;
 
 const movies = new Array(MOVIE_COUNT).fill().map(generateMovie);
-// console.log(movies);
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
