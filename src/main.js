@@ -13,13 +13,16 @@ import {createFilterTemplate} from "./view/filter.js";
 import {generateMovie} from "./mock/movie.js";
 import {getComments} from "./mock/comment.js";
 import {generateFilter} from "./mock/filter.js";
+import {generateUserRank} from "./mock/user-rank.js";
 
 const MOVIE_COUNT = 23;
 const MOVIE_COUNT_PER_STEP = 5;
 const EXTRA_MOVIE_COUNT = 2;
 
 const movies = new Array(MOVIE_COUNT).fill().map(generateMovie);
+const watchedMovies = movies.filter((movie) => movie.userInfo.isWatched);
 const filters = generateFilter(movies);
+const userRank = generateUserRank(watchedMovies.length);
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -29,7 +32,7 @@ const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 const siteFooter = document.querySelector(`.footer`);
 
-render(siteHeader, createUserProfileTemplate(), `beforeend`);
+render(siteHeader, createUserProfileTemplate(userRank), `beforeend`);
 render(siteMain, createMenuTemplate(), `beforeend`);
 
 const siteNavigation = siteMain.querySelector(`.main-navigation`);
