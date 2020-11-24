@@ -21,8 +21,17 @@ const EXTRA_MOVIE_COUNT = 2;
 
 const movies = new Array(MOVIE_COUNT).fill().map(generateMovie);
 const watchedMovies = movies.filter((movie) => movie.userInfo.isWatched);
+const topRatedMovies = movies
+  .slice()
+  .sort((a, b) => b.rating - a.rating)
+  .slice(0, EXTRA_MOVIE_COUNT);
+const mostCommentedMovies = movies
+  .slice()
+  .sort((a, b) => b.comments.length - a.comments.length)
+  .slice(0, EXTRA_MOVIE_COUNT);
 const filters = generateFilter(movies);
 const userRank = generateUserRank(watchedMovies.length);
+
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -53,12 +62,12 @@ const mostCommentedList = board.querySelector(`.films-list--commented .films-lis
 
 for (let i = 0; i < MOVIE_COUNT_PER_STEP; i++) {
   render(mainList, createMovieTemplate(movies[i]), `beforeend`);
-
-  if (i < EXTRA_MOVIE_COUNT) {
-    render(topRatedList, createMovieTemplate(movies[i]), `beforeend`);
-    render(mostCommentedList, createMovieTemplate(movies[i]), `beforeend`);
-  }
 }
+
+topRatedMovies
+  .forEach((movie) => render(topRatedList, createMovieTemplate(movie), `beforeend`));
+mostCommentedMovies
+  .forEach((movie) => render(mostCommentedList, createMovieTemplate(movie), `beforeend`));
 
 if (movies.length > MOVIE_COUNT_PER_STEP) {
   let renderedMovieCount = MOVIE_COUNT_PER_STEP;
@@ -81,5 +90,5 @@ if (movies.length > MOVIE_COUNT_PER_STEP) {
   });
 }
 
-// render(siteMain, createPopupTemplate(movies[0], getComments(movies[0].id)), `beforeend`);
+render(siteMain, createPopupTemplate(movies[0], getComments(movies[0].id)), `beforeend`);
 render(siteFooter, createCounterTemplate(), `beforeend`);
