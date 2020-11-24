@@ -12,12 +12,14 @@ import {createPopupTemplate} from "./view/popup.js";
 import {createFilterTemplate} from "./view/filter.js";
 import {generateMovie} from "./mock/movie.js";
 import {getComments} from "./mock/comment.js";
+import {generateFilter} from "./mock/filter.js";
 
 const MOVIE_COUNT = 23;
 const MOVIE_COUNT_PER_STEP = 5;
 const EXTRA_MOVIE_COUNT = 2;
 
 const movies = new Array(MOVIE_COUNT).fill().map(generateMovie);
+const filters = generateFilter(movies);
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -32,7 +34,7 @@ render(siteMain, createMenuTemplate(), `beforeend`);
 
 const siteNavigation = siteMain.querySelector(`.main-navigation`);
 
-render(siteNavigation, createFilterTemplate(), `afterbegin`);
+render(siteNavigation, createFilterTemplate(filters), `afterbegin`);
 render(siteMain, createSortTemplate(), `beforeend`);
 render(siteMain, createBoardTemplate(), `beforeend`);
 
