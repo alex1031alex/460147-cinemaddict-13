@@ -60,6 +60,26 @@ for (let i = 0; i < MOVIE_COUNT_PER_STEP; i++) {
   }
 }
 
-render(mainList, createShowMoreButtonTemplate(), `afterend`);
+if (movies.length > MOVIE_COUNT_PER_STEP) {
+  let renderedMovieCount = MOVIE_COUNT_PER_STEP;
+
+  render(mainList, createShowMoreButtonTemplate(), `afterend`);
+
+  const showMoreButton = board.querySelector(`.films-list__show-more`);
+
+  showMoreButton.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+    movies
+      .slice(renderedMovieCount, renderedMovieCount + MOVIE_COUNT_PER_STEP)
+      .forEach((movie) => render(mainList, createMovieTemplate(movie), `beforeend`));
+
+    renderedMovieCount += MOVIE_COUNT_PER_STEP;
+
+    if (renderedMovieCount >= movies.length) {
+      showMoreButton.remove();
+    }
+  });
+}
+
 // render(siteMain, createPopupTemplate(movies[0], getComments(movies[0].id)), `beforeend`);
 render(siteFooter, createCounterTemplate(), `beforeend`);
