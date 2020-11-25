@@ -99,19 +99,15 @@ const getRandomSublist = (list, minLength, maxLength) => {
     return list.slice();
   }
 
-  const sublistLength = minLength === maxLength
-    ? minLength
-    : getRandomInteger(minLength, maxLength);
+  const sublistLength = getRandomInteger(minLength, maxLength);
 
   const sublist = [];
   let workList = list.slice();
 
   for (let i = 0; i < sublistLength; i++) {
-    const randomIndex = getRandomInteger(0, workList.length - 1);
-    sublist.push(workList[randomIndex]);
-    workList = workList
-      .slice(0, randomIndex)
-      .concat(workList.slice(randomIndex + 1));
+    const randomElement = workList.splice(getRandomInteger(0, workList.length - 1), 1);
+
+    sublist.push(randomElement);
   }
 
   return sublist;
