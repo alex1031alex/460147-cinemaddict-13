@@ -10,7 +10,7 @@ const movieToFilterMap = {
     .filter((movie) => movie.userInfo.isFavorite).length,
 };
 
-const generateFilter = (movies) => {
+export const generateFilter = (movies) => {
   return Object.entries(movieToFilterMap).map(([filterName, countMovies]) => {
     return {
       name: filterName,
@@ -18,5 +18,3 @@ const generateFilter = (movies) => {
     };
   });
 };
-
-export {generateFilter};

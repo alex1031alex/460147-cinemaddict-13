@@ -4,7 +4,7 @@ const UserRank = {
   MOVIE_BUFF: `Movie Buff`
 };
 
-const generateUserRank = (watchedMoviesCount) => {
+export const generateUserRank = (watchedMoviesCount) => {
   if (watchedMoviesCount > 20) {
     return UserRank.MOVIE_BUFF;
   }
@@ -19,5 +19,3 @@ const generateUserRank = (watchedMoviesCount) => {
 
   return ``;
 };
-
-export {generateUserRank};

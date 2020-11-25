@@ -43,7 +43,7 @@ const generateDate = () => {
   return new Date(currentDate);
 };
 
-const generateComment = (movieId) => {
+export const generateComment = (movieId) => {
   if (!comments[movieId]) {
     comments[movieId] = [];
   }
@@ -61,8 +61,6 @@ const generateComment = (movieId) => {
   return comment.id;
 };
 
-const getComments = (movieId) => {
+export const getComments = (movieId) => {
   return comments[movieId];
 };
-
-export {generateComment, getComments};

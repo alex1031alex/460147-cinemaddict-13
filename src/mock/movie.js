@@ -165,7 +165,7 @@ const generateComments = (movieId) => {
   return comments;
 };
 
-const generateMovie = () => {
+export const generateMovie = () => {
   const title = getRandomItem(titles);
   const releaseDate = generateReleaseDate();
   const id = nanoid();
@@ -193,5 +193,3 @@ const generateMovie = () => {
     comments: generateComments(id)
   };
 };
-
-export {generateMovie};
