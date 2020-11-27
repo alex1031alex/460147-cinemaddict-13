@@ -1,11 +1,11 @@
 import UserProfileView from "./view/user-profile.js";
-import {createMenuTemplate} from "./view/menu.js";
-import {createSortTemplate} from "./view/sort.js";
-import {createBoardTemplate} from "./view/board.js";
-import {createMainListTemplate} from "./view/main-list.js";
-import {createTopRatedListTemplate} from "./view/top-rated-list.js";
-import {createMostCommentedListTemplate} from "./view/most-commented-list.js";
-import {createShowMoreButtonTemplate} from "./view/show-more-button.js";
+import MenuView from "./view/menu.js";
+import SortView from "./view/sort.js";
+import BoardView from "./view/board.js";
+import MainListView from "./view/main-list.js";
+import TopRatedListView from "./view/top-rated-list.js";
+import MostCommentedListView from "./view/most-commented-list.js";
+import ShowMoreButtonView from "./view/show-more-button.js";
 import {createMovieTemplate} from "./view/movie.js";
 import {createCounterTemplate} from "./view/counter.js";
 import {createPopupTemplate} from "./view/popup.js";
@@ -37,20 +37,29 @@ const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 const siteFooter = document.querySelector(`.footer`);
 
-renderElement(siteHeader, new UserProfileView(userRank).getElement(), `beforeend`);
-renderTemplate(siteMain, createMenuTemplate(), `beforeend`);
+const userProfileComponent = new UserProfileView(userRank);
+const menuComponent = new MenuView();
+const sortComponent = new SortView();
+const boardComponent = new BoardView();
+const mainListComponent = new MainListView();
+const topRatedListComponent = new TopRatedListView();
+const mostCommentedListComponent = new MostCommentedListView();
+const showMoreButtonComponent = new ShowMoreButtonView();
+
+renderElement(siteHeader, userProfileComponent.getElement(), `beforeend`);
+renderElement(siteMain, menuComponent.getElement(), `beforeend`);
 
 const siteNavigation = siteMain.querySelector(`.main-navigation`);
 
 renderTemplate(siteNavigation, createFilterTemplate(filters), `afterbegin`);
-renderTemplate(siteMain, createSortTemplate(), `beforeend`);
-renderTemplate(siteMain, createBoardTemplate(), `beforeend`);
+renderElement(siteMain, sortComponent.getElement(), `beforeend`);
+renderElement(siteMain, boardComponent.getElement(), `beforeend`);
 
 const board = siteMain.querySelector(`.films`);
 
-renderTemplate(board, createMainListTemplate(), `beforeend`);
-renderTemplate(board, createTopRatedListTemplate(), `beforeend`);
-renderTemplate(board, createMostCommentedListTemplate(), `beforeend`);
+renderElement(board, mainListComponent.getElement(), `beforeend`);
+renderElement(board, topRatedListComponent.getElement(), `beforeend`);
+renderElement(board, mostCommentedListComponent.getElement(), `beforeend`);
 
 const mainList = board.querySelector(`.films-list .films-list__container`);
 const topRatedList = board.querySelector(`.films-list--rated .films-list__container`);
@@ -68,11 +77,9 @@ mostCommentedMovies
 if (movies.length > MOVIE_COUNT_PER_STEP) {
   let renderedMovieCount = MOVIE_COUNT_PER_STEP;
 
-  renderTemplate(mainList, createShowMoreButtonTemplate(), `afterend`);
+  renderElement(mainList, showMoreButtonComponent.getElement(), `afterend`);
 
-  const showMoreButton = board.querySelector(`.films-list__show-more`);
-
-  showMoreButton.addEventListener(`click`, (evt) => {
+  showMoreButtonComponent.getElement().addEventListener(`click`, (evt) => {
     evt.preventDefault();
     movies
       .slice(renderedMovieCount, renderedMovieCount + MOVIE_COUNT_PER_STEP)
@@ -81,7 +88,8 @@ if (movies.length > MOVIE_COUNT_PER_STEP) {
     renderedMovieCount += MOVIE_COUNT_PER_STEP;
 
     if (renderedMovieCount >= movies.length) {
-      showMoreButton.remove();
+      showMoreButtonComponent.getElement().remove();
+      showMoreButtonComponent.removeElement();
     }
   });
 }
