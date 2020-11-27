@@ -14,7 +14,7 @@ import {generateMovie} from "./mock/movie.js";
 import {getComments} from "./mock/comment.js";
 import {generateFilter} from "./mock/filter.js";
 import {generateUserRank} from "./mock/user-rank.js";
-import {renderElement} from "./utils.js";
+import {render, RenderPosition} from "./utils.js";
 
 const MOVIE_COUNT = 23;
 const MOVIE_COUNT_PER_STEP = 5;
@@ -49,49 +49,57 @@ const showMoreButtonComponent = new ShowMoreButtonView();
 const counterComponent = new CounterView(movies.length);
 const filterComponent = new FilterView(filters);
 
-renderElement(siteHeader, userProfileComponent.getElement(), `beforeend`);
-renderElement(siteMain, menuComponent.getElement(), `beforeend`);
+render(siteHeader, userProfileComponent.getElement(), RenderPosition.BEFOREEND);
+render(siteMain, menuComponent.getElement(), RenderPosition.BEFOREEND);
 
 const siteNavigation = siteMain.querySelector(`.main-navigation`);
 
-renderElement(siteNavigation, filterComponent.getElement(), `afterbegin`);
-renderElement(siteMain, sortComponent.getElement(), `beforeend`);
-renderElement(siteMain, boardComponent.getElement(), `beforeend`);
+render(siteNavigation, filterComponent.getElement(), RenderPosition.AFTERBEGIN);
+render(siteMain, sortComponent.getElement(), RenderPosition.BEFOREEND);
+render(siteMain, boardComponent.getElement(), RenderPosition.BEFOREEND);
 
 const board = siteMain.querySelector(`.films`);
 
-renderElement(board, mainListComponent.getElement(), `beforeend`);
-renderElement(board, topRatedListComponent.getElement(), `beforeend`);
-renderElement(board, mostCommentedListComponent.getElement(), `beforeend`);
+render(board, mainListComponent.getElement(), RenderPosition.BEFOREEND);
+render(board, topRatedListComponent.getElement(), RenderPosition.BEFOREEND);
+render(board, mostCommentedListComponent.getElement(), RenderPosition.BEFOREEND);
 
 const mainList = board.querySelector(`.films-list .films-list__container`);
 const topRatedList = board.querySelector(`.films-list--rated .films-list__container`);
 const mostCommentedList = board.querySelector(`.films-list--commented .films-list__container`);
 
 for (let i = 0; i < MOVIE_COUNT_PER_STEP; i++) {
-  renderElement(mainList, new MovieView(movies[i]).getElement(), `beforeend`);
+  render(mainList, new MovieView(movies[i]).getElement(), RenderPosition.BEFOREEND);
 }
 
 topRatedMovies
-  .forEach((movie) => renderElement(topRatedList, new MovieView(movie).getElement(), `beforeend`));
+  .forEach((movie) => render(
+      topRatedList,
+      new MovieView(movie).getElement(),
+      RenderPosition.BEFOREEND
+  ));
 
 mostCommentedMovies
-  .forEach((movie) => renderElement(
+  .forEach((movie) => render(
       mostCommentedList,
       new MovieView(movie).getElement(),
-      `beforeend`
+      RenderPosition.BEFOREEND
   ));
 
 if (movies.length > MOVIE_COUNT_PER_STEP) {
   let renderedMovieCount = MOVIE_COUNT_PER_STEP;
 
-  renderElement(mainList, showMoreButtonComponent.getElement(), `afterend`);
+  render(mainList, showMoreButtonComponent.getElement(), RenderPosition.AFTEREND);
 
   showMoreButtonComponent.getElement().addEventListener(`click`, (evt) => {
     evt.preventDefault();
     movies
       .slice(renderedMovieCount, renderedMovieCount + MOVIE_COUNT_PER_STEP)
-      .forEach((movie) => renderElement(mainList, new MovieView(movie).getElement(), `beforeend`));
+      .forEach((movie) => render(
+          mainList,
+          new MovieView(movie).getElement(),
+          RenderPosition.BEFOREEND
+      ));
 
     renderedMovieCount += MOVIE_COUNT_PER_STEP;
 
@@ -102,9 +110,9 @@ if (movies.length > MOVIE_COUNT_PER_STEP) {
   });
 }
 
-renderElement(
+render(
     siteMain,
     new PopupView(movies[0], getComments(movies[0].id)).getElement(),
-    `beforeend`
+    RenderPosition.BEFOREEND
 );
-renderElement(siteFooter, counterComponent.getElement(), `beforeend`);
+render(siteFooter, counterComponent.getElement(), RenderPosition.BEFOREEND);
