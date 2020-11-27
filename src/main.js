@@ -19,6 +19,7 @@ import {render, RenderPosition} from "./utils.js";
 const MOVIE_COUNT = 23;
 const MOVIE_COUNT_PER_STEP = 5;
 const EXTRA_MOVIE_COUNT = 2;
+const OVERFLOW_HIDE_CLASS = `hide-overflow`;
 
 const movies = new Array(MOVIE_COUNT).fill().map(generateMovie);
 const watchedMovies = movies.filter((movie) => movie.userInfo.isWatched);
@@ -75,10 +76,12 @@ const renderMovie = (container, movie) => {
 
   const openPopup = () => {
     page.appendChild(popupComponent.getElement());
+    page.classList.add(OVERFLOW_HIDE_CLASS);
   };
 
   const closePopup = () => {
     page.removeChild(popupComponent.getElement());
+    page.classList.remove(OVERFLOW_HIDE_CLASS);
   };
 
   const movieTitle = movieComponent.getElement().querySelector(`.film-card__title`);
