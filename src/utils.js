@@ -1,14 +1,53 @@
-const getRandomInteger = (min = 0, max = 1) => {
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  AFTEREND: `afterend`,
+  BEFOREBEGIN: `beforebegin`,
+  BEFOREEND: `beforeend`
+};
+
+export const renderElement = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN: {
+      container.prepend(element);
+      break;
+    }
+    case RenderPosition.AFTEREND: {
+      container.after(element);
+      break;
+    }
+    case RenderPosition.BEFOREBEGIN: {
+      container.before(element);
+      break;
+    }
+    case RenderPosition.BEFOREEND: {
+      container.append(element);
+      break;
+    }
+  }
+};
+
+export const renderTemplate = (container, template, place) => {
+  container.insertAdjacentHTML(place, template);
+};
+
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstChild;
+};
+
+export const getRandomInteger = (min = 0, max = 1) => {
   return Math.floor(min + Math.random() * (max + 1 - min));
 };
 
-const getRandomItem = (array) => {
+export const getRandomItem = (array) => {
   const randomIndex = getRandomInteger(0, array.length - 1);
 
   return array[randomIndex];
 };
 
-const convertToHourFormat = (timeInMinutes) => {
+export const convertToHourFormat = (timeInMinutes) => {
   if (timeInMinutes < 60) {
     return `${timeInMinutes}m`;
   }
@@ -18,5 +57,3 @@ const convertToHourFormat = (timeInMinutes) => {
 
   return `${hours}h ${minutes}m`;
 };
-
-export {getRandomInteger, getRandomItem, convertToHourFormat};

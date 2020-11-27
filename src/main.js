@@ -14,6 +14,7 @@ import {generateMovie} from "./mock/movie.js";
 import {getComments} from "./mock/comment.js";
 import {generateFilter} from "./mock/filter.js";
 import {generateUserRank} from "./mock/user-rank.js";
+import {renderTemplate} from "./utils.js";
 
 const MOVIE_COUNT = 23;
 const MOVIE_COUNT_PER_STEP = 5;
@@ -32,47 +33,42 @@ const mostCommentedMovies = movies
 const filters = generateFilter(movies);
 const userRank = generateUserRank(watchedMovies.length);
 
-
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
-
 const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 const siteFooter = document.querySelector(`.footer`);
 
-render(siteHeader, createUserProfileTemplate(userRank), `beforeend`);
-render(siteMain, createMenuTemplate(), `beforeend`);
+renderTemplate(siteHeader, createUserProfileTemplate(userRank), `beforeend`);
+renderTemplate(siteMain, createMenuTemplate(), `beforeend`);
 
 const siteNavigation = siteMain.querySelector(`.main-navigation`);
 
-render(siteNavigation, createFilterTemplate(filters), `afterbegin`);
-render(siteMain, createSortTemplate(), `beforeend`);
-render(siteMain, createBoardTemplate(), `beforeend`);
+renderTemplate(siteNavigation, createFilterTemplate(filters), `afterbegin`);
+renderTemplate(siteMain, createSortTemplate(), `beforeend`);
+renderTemplate(siteMain, createBoardTemplate(), `beforeend`);
 
 const board = siteMain.querySelector(`.films`);
 
-render(board, createMainListTemplate(), `beforeend`);
-render(board, createTopRatedListTemplate(), `beforeend`);
-render(board, createMostCommentedListTemplate(), `beforeend`);
+renderTemplate(board, createMainListTemplate(), `beforeend`);
+renderTemplate(board, createTopRatedListTemplate(), `beforeend`);
+renderTemplate(board, createMostCommentedListTemplate(), `beforeend`);
 
 const mainList = board.querySelector(`.films-list .films-list__container`);
 const topRatedList = board.querySelector(`.films-list--rated .films-list__container`);
 const mostCommentedList = board.querySelector(`.films-list--commented .films-list__container`);
 
 for (let i = 0; i < MOVIE_COUNT_PER_STEP; i++) {
-  render(mainList, createMovieTemplate(movies[i]), `beforeend`);
+  renderTemplate(mainList, createMovieTemplate(movies[i]), `beforeend`);
 }
 
 topRatedMovies
-  .forEach((movie) => render(topRatedList, createMovieTemplate(movie), `beforeend`));
+  .forEach((movie) => renderTemplate(topRatedList, createMovieTemplate(movie), `beforeend`));
 mostCommentedMovies
-  .forEach((movie) => render(mostCommentedList, createMovieTemplate(movie), `beforeend`));
+  .forEach((movie) => renderTemplate(mostCommentedList, createMovieTemplate(movie), `beforeend`));
 
 if (movies.length > MOVIE_COUNT_PER_STEP) {
   let renderedMovieCount = MOVIE_COUNT_PER_STEP;
 
-  render(mainList, createShowMoreButtonTemplate(), `afterend`);
+  renderTemplate(mainList, createShowMoreButtonTemplate(), `afterend`);
 
   const showMoreButton = board.querySelector(`.films-list__show-more`);
 
@@ -80,7 +76,7 @@ if (movies.length > MOVIE_COUNT_PER_STEP) {
     evt.preventDefault();
     movies
       .slice(renderedMovieCount, renderedMovieCount + MOVIE_COUNT_PER_STEP)
-      .forEach((movie) => render(mainList, createMovieTemplate(movie), `beforeend`));
+      .forEach((movie) => renderTemplate(mainList, createMovieTemplate(movie), `beforeend`));
 
     renderedMovieCount += MOVIE_COUNT_PER_STEP;
 
@@ -90,5 +86,5 @@ if (movies.length > MOVIE_COUNT_PER_STEP) {
   });
 }
 
-render(siteMain, createPopupTemplate(movies[0], getComments(movies[0].id)), `beforeend`);
-render(siteFooter, createCounterTemplate(), `beforeend`);
+renderTemplate(siteMain, createPopupTemplate(movies[0], getComments(movies[0].id)), `beforeend`);
+renderTemplate(siteFooter, createCounterTemplate(), `beforeend`);
