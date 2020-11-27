@@ -33,6 +33,7 @@ const mostCommentedMovies = movies
 const filters = generateFilter(movies);
 const userRank = generateUserRank(watchedMovies.length);
 
+const page = document.querySelector(`body`);
 const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 const siteFooter = document.querySelector(`.footer`);
@@ -70,6 +71,40 @@ const mostCommentedList = board.querySelector(`.films-list--commented .films-lis
 
 const renderMovie = (container, movie) => {
   const movieComponent = new MovieView(movie);
+  const popupComponent = new PopupView(movie, getComments(movie.id));
+
+  const openPopup = () => {
+    page.appendChild(popupComponent.getElement());
+  };
+
+  const closePopup = () => {
+    page.removeChild(popupComponent.getElement());
+  };
+
+  const movieTitle = movieComponent.getElement().querySelector(`.film-card__title`);
+  const moviePoster = movieComponent.getElement().querySelector(`.film-card__poster`);
+  const movieCommentsElement = movieComponent.getElement().querySelector(`.film-card__comments`);
+  const popupCloseButton = popupComponent.getElement().querySelector(`.film-details__close-btn`);
+
+  movieTitle.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+    openPopup();
+  });
+
+  moviePoster.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+    openPopup();
+  });
+
+  movieCommentsElement.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+    openPopup();
+  });
+
+  popupCloseButton.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+    closePopup();
+  });
 
   render(container, movieComponent.getElement(), RenderPosition.BEFOREEND);
 };
