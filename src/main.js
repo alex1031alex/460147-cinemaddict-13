@@ -68,23 +68,18 @@ const mainList = board.querySelector(`.films-list .films-list__container`);
 const topRatedList = board.querySelector(`.films-list--rated .films-list__container`);
 const mostCommentedList = board.querySelector(`.films-list--commented .films-list__container`);
 
+const renderMovie = (container, movie) => {
+  const movieComponent = new MovieView(movie);
+
+  render(container, movieComponent.getElement(), RenderPosition.BEFOREEND);
+};
+
 for (let i = 0; i < MOVIE_COUNT_PER_STEP; i++) {
-  render(mainList, new MovieView(movies[i]).getElement(), RenderPosition.BEFOREEND);
+  renderMovie(mainList, movies[i]);
 }
 
-topRatedMovies
-  .forEach((movie) => render(
-      topRatedList,
-      new MovieView(movie).getElement(),
-      RenderPosition.BEFOREEND
-  ));
-
-mostCommentedMovies
-  .forEach((movie) => render(
-      mostCommentedList,
-      new MovieView(movie).getElement(),
-      RenderPosition.BEFOREEND
-  ));
+topRatedMovies.forEach((movie) => renderMovie(topRatedList, movie));
+mostCommentedMovies.forEach((movie) => renderMovie(mostCommentedList, movie));
 
 if (movies.length > MOVIE_COUNT_PER_STEP) {
   let renderedMovieCount = MOVIE_COUNT_PER_STEP;
@@ -95,11 +90,7 @@ if (movies.length > MOVIE_COUNT_PER_STEP) {
     evt.preventDefault();
     movies
       .slice(renderedMovieCount, renderedMovieCount + MOVIE_COUNT_PER_STEP)
-      .forEach((movie) => render(
-          mainList,
-          new MovieView(movie).getElement(),
-          RenderPosition.BEFOREEND
-      ));
+      .forEach((movie) => renderMovie(mainList, movie));
 
     renderedMovieCount += MOVIE_COUNT_PER_STEP;
 
@@ -110,9 +101,4 @@ if (movies.length > MOVIE_COUNT_PER_STEP) {
   });
 }
 
-render(
-    siteMain,
-    new PopupView(movies[0], getComments(movies[0].id)).getElement(),
-    RenderPosition.BEFOREEND
-);
 render(siteFooter, counterComponent.getElement(), RenderPosition.BEFOREEND);
