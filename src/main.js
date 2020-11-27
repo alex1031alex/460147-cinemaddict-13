@@ -1,4 +1,4 @@
-import {createUserProfileTemplate} from "./view/user-profile.js";
+import UserProfileView from "./view/user-profile.js";
 import {createMenuTemplate} from "./view/menu.js";
 import {createSortTemplate} from "./view/sort.js";
 import {createBoardTemplate} from "./view/board.js";
@@ -14,7 +14,7 @@ import {generateMovie} from "./mock/movie.js";
 import {getComments} from "./mock/comment.js";
 import {generateFilter} from "./mock/filter.js";
 import {generateUserRank} from "./mock/user-rank.js";
-import {renderTemplate} from "./utils.js";
+import {renderTemplate, renderElement} from "./utils.js";
 
 const MOVIE_COUNT = 23;
 const MOVIE_COUNT_PER_STEP = 5;
@@ -37,7 +37,7 @@ const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 const siteFooter = document.querySelector(`.footer`);
 
-renderTemplate(siteHeader, createUserProfileTemplate(userRank), `beforeend`);
+renderElement(siteHeader, new UserProfileView(userRank).getElement(), `beforeend`);
 renderTemplate(siteMain, createMenuTemplate(), `beforeend`);
 
 const siteNavigation = siteMain.querySelector(`.main-navigation`);
