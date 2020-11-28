@@ -1,9 +1,10 @@
+import {createElement} from "../utils.js";
 import {convertToHourFormat} from "../utils.js";
 
 const MAX_BRIEF_LENGTH = 140;
 const ACTIVE_CLASS = `film-card__controls-item--active`;
 
-export const createMovieTemplate = (movie) => {
+const createMovieTemplate = (movie) => {
   const {
     title,
     poster,
@@ -80,3 +81,26 @@ export const createMovieTemplate = (movie) => {
     </div>
   </article>`;
 };
+
+export default class Movie {
+  constructor(movie) {
+    this._movie = movie;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createMovieTemplate(this._movie);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

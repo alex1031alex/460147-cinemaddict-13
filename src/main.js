@@ -1,23 +1,25 @@
-import {createUserProfileTemplate} from "./view/user-profile.js";
-import {createMenuTemplate} from "./view/menu.js";
-import {createSortTemplate} from "./view/sort.js";
-import {createBoardTemplate} from "./view/board.js";
-import {createMainListTemplate} from "./view/main-list.js";
-import {createTopRatedListTemplate} from "./view/top-rated-list.js";
-import {createMostCommentedListTemplate} from "./view/most-commented-list.js";
-import {createShowMoreButtonTemplate} from "./view/show-more-button.js";
-import {createMovieTemplate} from "./view/movie.js";
-import {createCounterTemplate} from "./view/counter.js";
-import {createPopupTemplate} from "./view/popup.js";
-import {createFilterTemplate} from "./view/filter.js";
+import UserProfileView from "./view/user-profile.js";
+import MenuView from "./view/menu.js";
+import SortView from "./view/sort.js";
+import BoardView from "./view/board.js";
+import MainListView from "./view/main-list.js";
+import TopRatedListView from "./view/top-rated-list.js";
+import MostCommentedListView from "./view/most-commented-list.js";
+import ShowMoreButtonView from "./view/show-more-button.js";
+import MovieView from "./view/movie.js";
+import CounterView from "./view/counter.js";
+import PopupView from "./view/popup.js";
+import FilterView from "./view/filter.js";
 import {generateMovie} from "./mock/movie.js";
 import {getComments} from "./mock/comment.js";
 import {generateFilter} from "./mock/filter.js";
 import {generateUserRank} from "./mock/user-rank.js";
+import {render, RenderPosition} from "./utils.js";
 
 const MOVIE_COUNT = 23;
 const MOVIE_COUNT_PER_STEP = 5;
 const EXTRA_MOVIE_COUNT = 2;
+const OVERFLOW_HIDE_CLASS = `hide-overflow`;
 
 const movies = new Array(MOVIE_COUNT).fill().map(generateMovie);
 const watchedMovies = movies.filter((movie) => movie.userInfo.isWatched);
@@ -32,63 +34,109 @@ const mostCommentedMovies = movies
 const filters = generateFilter(movies);
 const userRank = generateUserRank(watchedMovies.length);
 
-
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
-
+const page = document.querySelector(`body`);
 const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 const siteFooter = document.querySelector(`.footer`);
 
-render(siteHeader, createUserProfileTemplate(userRank), `beforeend`);
-render(siteMain, createMenuTemplate(), `beforeend`);
+const userProfileComponent = new UserProfileView(userRank);
+const menuComponent = new MenuView();
+const sortComponent = new SortView();
+const boardComponent = new BoardView();
+const mainListComponent = new MainListView();
+const topRatedListComponent = new TopRatedListView();
+const mostCommentedListComponent = new MostCommentedListView();
+const showMoreButtonComponent = new ShowMoreButtonView();
+
+const counterComponent = new CounterView(movies.length);
+const filterComponent = new FilterView(filters);
+
+render(siteHeader, userProfileComponent.getElement(), RenderPosition.BEFOREEND);
+render(siteMain, menuComponent.getElement(), RenderPosition.BEFOREEND);
 
 const siteNavigation = siteMain.querySelector(`.main-navigation`);
 
-render(siteNavigation, createFilterTemplate(filters), `afterbegin`);
-render(siteMain, createSortTemplate(), `beforeend`);
-render(siteMain, createBoardTemplate(), `beforeend`);
+render(siteNavigation, filterComponent.getElement(), RenderPosition.AFTERBEGIN);
+render(siteMain, sortComponent.getElement(), RenderPosition.BEFOREEND);
+render(siteMain, boardComponent.getElement(), RenderPosition.BEFOREEND);
 
 const board = siteMain.querySelector(`.films`);
 
-render(board, createMainListTemplate(), `beforeend`);
-render(board, createTopRatedListTemplate(), `beforeend`);
-render(board, createMostCommentedListTemplate(), `beforeend`);
+render(board, mainListComponent.getElement(), RenderPosition.BEFOREEND);
+render(board, topRatedListComponent.getElement(), RenderPosition.BEFOREEND);
+render(board, mostCommentedListComponent.getElement(), RenderPosition.BEFOREEND);
 
 const mainList = board.querySelector(`.films-list .films-list__container`);
 const topRatedList = board.querySelector(`.films-list--rated .films-list__container`);
 const mostCommentedList = board.querySelector(`.films-list--commented .films-list__container`);
 
+const renderMovie = (container, movie) => {
+  const movieComponent = new MovieView(movie);
+  const popupComponent = new PopupView(movie, getComments(movie.id));
+
+  const openPopup = () => {
+    page.appendChild(popupComponent.getElement());
+    page.classList.add(OVERFLOW_HIDE_CLASS);
+  };
+
+  const closePopup = () => {
+    page.removeChild(popupComponent.getElement());
+    page.classList.remove(OVERFLOW_HIDE_CLASS);
+  };
+
+  const movieTitle = movieComponent.getElement().querySelector(`.film-card__title`);
+  const moviePoster = movieComponent.getElement().querySelector(`.film-card__poster`);
+  const movieCommentsElement = movieComponent.getElement().querySelector(`.film-card__comments`);
+  const popupCloseButton = popupComponent.getElement().querySelector(`.film-details__close-btn`);
+
+  movieTitle.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+    openPopup();
+  });
+
+  moviePoster.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+    openPopup();
+  });
+
+  movieCommentsElement.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+    openPopup();
+  });
+
+  popupCloseButton.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+    closePopup();
+  });
+
+  render(container, movieComponent.getElement(), RenderPosition.BEFOREEND);
+};
+
 for (let i = 0; i < MOVIE_COUNT_PER_STEP; i++) {
-  render(mainList, createMovieTemplate(movies[i]), `beforeend`);
+  renderMovie(mainList, movies[i]);
 }
 
-topRatedMovies
-  .forEach((movie) => render(topRatedList, createMovieTemplate(movie), `beforeend`));
-mostCommentedMovies
-  .forEach((movie) => render(mostCommentedList, createMovieTemplate(movie), `beforeend`));
+topRatedMovies.forEach((movie) => renderMovie(topRatedList, movie));
+mostCommentedMovies.forEach((movie) => renderMovie(mostCommentedList, movie));
 
 if (movies.length > MOVIE_COUNT_PER_STEP) {
   let renderedMovieCount = MOVIE_COUNT_PER_STEP;
 
-  render(mainList, createShowMoreButtonTemplate(), `afterend`);
+  render(mainList, showMoreButtonComponent.getElement(), RenderPosition.AFTEREND);
 
-  const showMoreButton = board.querySelector(`.films-list__show-more`);
-
-  showMoreButton.addEventListener(`click`, (evt) => {
+  showMoreButtonComponent.getElement().addEventListener(`click`, (evt) => {
     evt.preventDefault();
     movies
       .slice(renderedMovieCount, renderedMovieCount + MOVIE_COUNT_PER_STEP)
-      .forEach((movie) => render(mainList, createMovieTemplate(movie), `beforeend`));
+      .forEach((movie) => renderMovie(mainList, movie));
 
     renderedMovieCount += MOVIE_COUNT_PER_STEP;
 
     if (renderedMovieCount >= movies.length) {
-      showMoreButton.remove();
+      showMoreButtonComponent.getElement().remove();
+      showMoreButtonComponent.removeElement();
     }
   });
 }
 
-render(siteMain, createPopupTemplate(movies[0], getComments(movies[0].id)), `beforeend`);
-render(siteFooter, createCounterTemplate(), `beforeend`);
+render(siteFooter, counterComponent.getElement(), RenderPosition.BEFOREEND);

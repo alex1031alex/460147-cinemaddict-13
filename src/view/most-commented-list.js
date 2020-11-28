@@ -1,4 +1,6 @@
-export const createMostCommentedListTemplate = () => (
+import {createElement} from "../utils.js";
+
+const createMostCommentedListTemplate = () => (
   `<section class="films-list--extra films-list--commented">
     <h2 class="films-list__title">Most commented</h2>
 
@@ -6,3 +8,25 @@ export const createMostCommentedListTemplate = () => (
     </div>
   </section>`
 );
+
+export default class MostCommentedList {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createMostCommentedListTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

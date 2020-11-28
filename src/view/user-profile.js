@@ -1,4 +1,6 @@
-export const createUserProfileTemplate = (userRank) => (
+import {createElement} from "../utils.js";
+
+const createUserProfileTemplate = (userRank) => (
   `<section class="header__profile profile">
     <p class="profile__rating">${userRank}</p>
     <img
@@ -10,3 +12,26 @@ export const createUserProfileTemplate = (userRank) => (
     >
   </section>`
 );
+
+export default class UserProfile {
+  constructor(userRank) {
+    this._userRank = userRank;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createUserProfileTemplate(this._userRank);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
