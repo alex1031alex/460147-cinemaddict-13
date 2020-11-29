@@ -89,24 +89,36 @@ const renderMovie = (container, movie) => {
   const movieCommentsElement = movieComponent.getElement().querySelector(`.film-card__comments`);
   const popupCloseButton = popupComponent.getElement().querySelector(`.film-details__close-btn`);
 
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      closePopup();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
   movieTitle.addEventListener(`click`, (evt) => {
     evt.preventDefault();
     openPopup();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   moviePoster.addEventListener(`click`, (evt) => {
     evt.preventDefault();
     openPopup();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   movieCommentsElement.addEventListener(`click`, (evt) => {
     evt.preventDefault();
     openPopup();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   popupCloseButton.addEventListener(`click`, (evt) => {
     evt.preventDefault();
     closePopup();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   render(container, movieComponent.getElement(), RenderPosition.BEFOREEND);
