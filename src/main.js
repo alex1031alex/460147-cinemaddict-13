@@ -17,21 +17,13 @@ import {generateFilter} from "./mock/filter.js";
 import {generateUserRank} from "./mock/user-rank.js";
 import {render, RenderPosition, isKeyEscape} from "./utils.js";
 
-const MOVIE_COUNT = 0;
+const MOVIE_COUNT = 23;
 const MOVIE_COUNT_PER_STEP = 5;
 const EXTRA_MOVIE_COUNT = 2;
 const OVERFLOW_HIDE_CLASS = `hide-overflow`;
 
 const movies = new Array(MOVIE_COUNT).fill().map(generateMovie);
 const watchedMovies = movies.filter((movie) => movie.userInfo.isWatched);
-const topRatedMovies = movies
-  .slice()
-  .sort((a, b) => b.rating - a.rating)
-  .slice(0, EXTRA_MOVIE_COUNT);
-const mostCommentedMovies = movies
-  .slice()
-  .sort((a, b) => b.comments.length - a.comments.length)
-  .slice(0, EXTRA_MOVIE_COUNT);
 const filters = generateFilter(movies);
 const userRank = generateUserRank(watchedMovies.length);
 
@@ -39,29 +31,6 @@ const page = document.querySelector(`body`);
 const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 const siteFooter = document.querySelector(`.footer`);
-
-const userProfileComponent = new UserProfileView(userRank);
-const menuComponent = new MenuView();
-const sortComponent = new SortView();
-const boardComponent = new BoardView();
-const noMoviesComponent = new NoMoviesView();
-const mainListComponent = new MainListView();
-const topRatedListComponent = new TopRatedListView();
-const mostCommentedListComponent = new MostCommentedListView();
-const showMoreButtonComponent = new ShowMoreButtonView();
-
-const counterComponent = new CounterView(movies.length);
-const filterComponent = new FilterView(filters);
-
-render(siteHeader, userProfileComponent.getElement(), RenderPosition.BEFOREEND);
-render(siteMain, menuComponent.getElement(), RenderPosition.BEFOREEND);
-
-const siteNavigation = siteMain.querySelector(`.main-navigation`);
-
-render(siteNavigation, filterComponent.getElement(), RenderPosition.AFTERBEGIN);
-render(siteMain, boardComponent.getElement(), RenderPosition.BEFOREEND);
-
-const board = siteMain.querySelector(`.films`);
 
 const renderMovie = (container, movie) => {
   const movieComponent = new MovieView(movie);
@@ -106,10 +75,34 @@ const renderMovie = (container, movie) => {
 
   render(container, movieComponent.getElement(), RenderPosition.BEFOREEND);
 };
-if (movies.length === 0) {
-  render(board, noMoviesComponent.getElement(), RenderPosition.AFTERBEGIN);
-} else {
-  render(siteNavigation, sortComponent.getElement(), RenderPosition.AFTEREND);
+
+const renderBoard = (boardContainer, moviesToRender) => {
+  const boardComponent = new BoardView();
+  const board = boardComponent.getElement();
+
+  render(boardContainer, board, RenderPosition.BEFOREEND);
+
+  if (moviesToRender.length === 0) {
+    render(board, new NoMoviesView().getElement(), RenderPosition.AFTERBEGIN);
+    return;
+  }
+
+  const sortComponent = new SortView();
+  const mainListComponent = new MainListView();
+  const topRatedListComponent = new TopRatedListView();
+  const mostCommentedListComponent = new MostCommentedListView();
+  const showMoreButtonComponent = new ShowMoreButtonView();
+
+  const topRatedMovies = moviesToRender
+    .slice()
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, EXTRA_MOVIE_COUNT);
+  const mostCommentedMovies = moviesToRender
+    .slice()
+    .sort((a, b) => b.comments.length - a.comments.length)
+    .slice(0, EXTRA_MOVIE_COUNT);
+
+  render(board, sortComponent.getElement(), RenderPosition.BEFOREBEGIN);
 
   render(board, mainListComponent.getElement(), RenderPosition.BEFOREEND);
   render(board, topRatedListComponent.getElement(), RenderPosition.BEFOREEND);
@@ -119,32 +112,45 @@ if (movies.length === 0) {
   const topRatedList = board.querySelector(`.films-list--rated .films-list__container`);
   const mostCommentedList = board.querySelector(`.films-list--commented .films-list__container`);
 
-  for (let i = 0; i < MOVIE_COUNT_PER_STEP; i++) {
-    renderMovie(mainList, movies[i]);
-  }
+  moviesToRender
+    .slice(0, Math.min(moviesToRender.length, MOVIE_COUNT_PER_STEP))
+    .forEach((movie) => renderMovie(mainList, movie));
 
   topRatedMovies.forEach((movie) => renderMovie(topRatedList, movie));
   mostCommentedMovies.forEach((movie) => renderMovie(mostCommentedList, movie));
 
-  if (movies.length > MOVIE_COUNT_PER_STEP) {
+  if (moviesToRender.length > MOVIE_COUNT_PER_STEP) {
     let renderedMovieCount = MOVIE_COUNT_PER_STEP;
 
     render(mainList, showMoreButtonComponent.getElement(), RenderPosition.AFTEREND);
 
     showMoreButtonComponent.getElement().addEventListener(`click`, (evt) => {
       evt.preventDefault();
-      movies
+      moviesToRender
         .slice(renderedMovieCount, renderedMovieCount + MOVIE_COUNT_PER_STEP)
         .forEach((movie) => renderMovie(mainList, movie));
 
       renderedMovieCount += MOVIE_COUNT_PER_STEP;
 
-      if (renderedMovieCount >= movies.length) {
+      if (renderedMovieCount >= moviesToRender.length) {
         showMoreButtonComponent.getElement().remove();
         showMoreButtonComponent.removeElement();
       }
     });
   }
-}
+};
 
+const userProfileComponent = new UserProfileView(userRank);
+const menuComponent = new MenuView();
+const filterComponent = new FilterView(filters);
+const counterComponent = new CounterView(movies.length);
+
+render(siteHeader, userProfileComponent.getElement(), RenderPosition.BEFOREEND);
+render(siteMain, menuComponent.getElement(), RenderPosition.BEFOREEND);
+
+const siteNavigation = siteMain.querySelector(`.main-navigation`);
+
+render(siteNavigation, filterComponent.getElement(), RenderPosition.AFTERBEGIN);
+
+renderBoard(siteMain, movies);
 render(siteFooter, counterComponent.getElement(), RenderPosition.BEFOREEND);
