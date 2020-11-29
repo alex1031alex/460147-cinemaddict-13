@@ -14,7 +14,7 @@ import {generateMovie} from "./mock/movie.js";
 import {getComments} from "./mock/comment.js";
 import {generateFilter} from "./mock/filter.js";
 import {generateUserRank} from "./mock/user-rank.js";
-import {render, RenderPosition} from "./utils.js";
+import {render, RenderPosition, isKeyEscape} from "./utils.js";
 
 const MOVIE_COUNT = 23;
 const MOVIE_COUNT_PER_STEP = 5;
@@ -86,33 +86,23 @@ const renderMovie = (container, movie) => {
 
   const movieTitle = movieComponent.getElement().querySelector(`.film-card__title`);
   const moviePoster = movieComponent.getElement().querySelector(`.film-card__poster`);
-  const movieCommentsElement = movieComponent.getElement().querySelector(`.film-card__comments`);
+  const commentsLink = movieComponent.getElement().querySelector(`.film-card__comments`);
   const popupCloseButton = popupComponent.getElement().querySelector(`.film-details__close-btn`);
 
   const onEscKeyDown = (evt) => {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
+    if (isKeyEscape(evt.key)) {
       evt.preventDefault();
       closePopup();
       document.removeEventListener(`keydown`, onEscKeyDown);
     }
   };
 
-  movieTitle.addEventListener(`click`, (evt) => {
-    evt.preventDefault();
-    openPopup();
-    document.addEventListener(`keydown`, onEscKeyDown);
-  });
-
-  moviePoster.addEventListener(`click`, (evt) => {
-    evt.preventDefault();
-    openPopup();
-    document.addEventListener(`keydown`, onEscKeyDown);
-  });
-
-  movieCommentsElement.addEventListener(`click`, (evt) => {
-    evt.preventDefault();
-    openPopup();
-    document.addEventListener(`keydown`, onEscKeyDown);
+  movieComponent.getElement().addEventListener(`click`, (evt) => {
+    if (evt.target === movieTitle || evt.target === moviePoster || evt.target === commentsLink) {
+      evt.preventDefault();
+      openPopup();
+      document.addEventListener(`keydown`, onEscKeyDown);
+    }
   });
 
   popupCloseButton.addEventListener(`click`, (evt) => {
