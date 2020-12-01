@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 import {convertToHourFormat} from "../utils.js";
 
 const formateReleaseDate = (date) => {
@@ -229,27 +229,14 @@ const createPopupTemplate = (movie, comments) => {
   </section>`;
 };
 
-export default class Popup {
+export default class Popup extends AbstractView {
   constructor(movie, comments = []) {
+    super();
     this._movie = movie;
     this._comments = comments;
-
-    this._element = null;
   }
 
   getTemplate() {
     return createPopupTemplate(this._movie, this._comments);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
