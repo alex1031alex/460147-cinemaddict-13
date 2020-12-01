@@ -13,4 +13,8 @@ export default class MainList extends AbstractView {
   getTemplate() {
     return createMainListTemplate();
   }
+
+  getMovieContainer() {
+    return this.getElement().querySelector(`.films-list__container`);
+  }
 }

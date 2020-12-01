@@ -100,26 +100,24 @@ const renderBoard = (boardContainer, moviesToRender) => {
   render(board, topRatedListComponent, RenderPosition.BEFOREEND);
   render(board, mostCommentedListComponent, RenderPosition.BEFOREEND);
 
-  const mainList = board.querySelector(`.films-list .films-list__container`);
-  const topRatedList = board.querySelector(`.films-list--rated .films-list__container`);
-  const mostCommentedList = board.querySelector(`.films-list--commented .films-list__container`);
-
   moviesToRender
     .slice(0, Math.min(moviesToRender.length, MOVIE_COUNT_PER_STEP))
-    .forEach((movie) => renderMovie(mainList, movie));
+    .forEach((movie) => renderMovie(mainListComponent.getMovieContainer(), movie));
 
-  topRatedMovies.forEach((movie) => renderMovie(topRatedList, movie));
-  mostCommentedMovies.forEach((movie) => renderMovie(mostCommentedList, movie));
+  topRatedMovies.forEach((movie) => renderMovie(topRatedListComponent.getMovieContainer(), movie));
+  mostCommentedMovies.forEach(
+      (movie) => renderMovie(mostCommentedListComponent.getMovieContainer(), movie)
+  );
 
   if (moviesToRender.length > MOVIE_COUNT_PER_STEP) {
     let renderedMovieCount = MOVIE_COUNT_PER_STEP;
 
-    render(mainList, showMoreButtonComponent, RenderPosition.AFTEREND);
+    render(mainListComponent.getMovieContainer(), showMoreButtonComponent, RenderPosition.AFTEREND);
 
     showMoreButtonComponent.setClickHandler(() => {
       moviesToRender
       .slice(renderedMovieCount, renderedMovieCount + MOVIE_COUNT_PER_STEP)
-      .forEach((movie) => renderMovie(mainList, movie));
+      .forEach((movie) => renderMovie(mainListComponent.getMovieContainer(), movie));
 
       renderedMovieCount += MOVIE_COUNT_PER_STEP;
 

@@ -13,4 +13,8 @@ export default class MostCommentedList extends AbstractView {
   getTemplate() {
     return createMostCommentedListTemplate();
   }
+
+  getMovieContainer() {
+    return this.getElement().querySelector(`.films-list__container`);
+  }
 }
