@@ -15,8 +15,8 @@ import {generateMovie} from "./mock/movie.js";
 import {getComments} from "./mock/comment.js";
 import {generateFilter} from "./mock/filter.js";
 import {generateUserRank} from "./mock/user-rank.js";
-import {render, RenderPosition} from "./utils/render.js";
-import {isKeyEscape} from "./utils/common.js"
+import {append, remove, render, RenderPosition} from "./utils/render.js";
+import {isKeyEscape} from "./utils/common.js";
 
 const MOVIE_COUNT = 23;
 const MOVIE_COUNT_PER_STEP = 5;
@@ -38,12 +38,12 @@ const renderMovie = (container, movie) => {
   const popupComponent = new PopupView(movie, getComments(movie.id));
 
   const openPopup = () => {
-    page.appendChild(popupComponent.getElement());
+    append(page, popupComponent);
     page.classList.add(OVERFLOW_HIDE_CLASS);
   };
 
   const closePopup = () => {
-    page.removeChild(popupComponent.getElement());
+    remove(popupComponent);
     page.classList.remove(OVERFLOW_HIDE_CLASS);
   };
 
@@ -65,7 +65,7 @@ const renderMovie = (container, movie) => {
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
-  render(container, movieComponent.getElement(), RenderPosition.BEFOREEND);
+  render(container, movieComponent, RenderPosition.BEFOREEND);
 };
 
 const renderBoard = (boardContainer, moviesToRender) => {
@@ -75,7 +75,7 @@ const renderBoard = (boardContainer, moviesToRender) => {
   render(boardContainer, board, RenderPosition.BEFOREEND);
 
   if (moviesToRender.length === 0) {
-    render(board, new NoMoviesView().getElement(), RenderPosition.AFTERBEGIN);
+    render(board, new NoMoviesView(), RenderPosition.AFTERBEGIN);
     return;
   }
 
@@ -94,11 +94,11 @@ const renderBoard = (boardContainer, moviesToRender) => {
     .sort((a, b) => b.comments.length - a.comments.length)
     .slice(0, EXTRA_MOVIE_COUNT);
 
-  render(board, sortComponent.getElement(), RenderPosition.BEFOREBEGIN);
+  render(board, sortComponent, RenderPosition.BEFOREBEGIN);
 
-  render(board, mainListComponent.getElement(), RenderPosition.BEFOREEND);
-  render(board, topRatedListComponent.getElement(), RenderPosition.BEFOREEND);
-  render(board, mostCommentedListComponent.getElement(), RenderPosition.BEFOREEND);
+  render(board, mainListComponent, RenderPosition.BEFOREEND);
+  render(board, topRatedListComponent, RenderPosition.BEFOREEND);
+  render(board, mostCommentedListComponent, RenderPosition.BEFOREEND);
 
   const mainList = board.querySelector(`.films-list .films-list__container`);
   const topRatedList = board.querySelector(`.films-list--rated .films-list__container`);
@@ -114,7 +114,7 @@ const renderBoard = (boardContainer, moviesToRender) => {
   if (moviesToRender.length > MOVIE_COUNT_PER_STEP) {
     let renderedMovieCount = MOVIE_COUNT_PER_STEP;
 
-    render(mainList, showMoreButtonComponent.getElement(), RenderPosition.AFTEREND);
+    render(mainList, showMoreButtonComponent, RenderPosition.AFTEREND);
 
     showMoreButtonComponent.setClickHandler(() => {
       moviesToRender
@@ -124,8 +124,7 @@ const renderBoard = (boardContainer, moviesToRender) => {
       renderedMovieCount += MOVIE_COUNT_PER_STEP;
 
       if (renderedMovieCount >= moviesToRender.length) {
-        showMoreButtonComponent.getElement().remove();
-        showMoreButtonComponent.removeElement();
+        remove(showMoreButtonComponent);
       }
     });
   }
@@ -136,12 +135,12 @@ const menuComponent = new MenuView();
 const filterComponent = new FilterView(filters);
 const counterComponent = new CounterView(movies.length);
 
-render(siteHeader, userProfileComponent.getElement(), RenderPosition.BEFOREEND);
-render(siteMain, menuComponent.getElement(), RenderPosition.BEFOREEND);
+render(siteHeader, userProfileComponent, RenderPosition.BEFOREEND);
+render(siteMain, menuComponent, RenderPosition.BEFOREEND);
 
 const siteNavigation = siteMain.querySelector(`.main-navigation`);
 
-render(siteNavigation, filterComponent.getElement(), RenderPosition.AFTERBEGIN);
+render(siteNavigation, filterComponent, RenderPosition.AFTERBEGIN);
 
 renderBoard(siteMain, movies);
-render(siteFooter, counterComponent.getElement(), RenderPosition.BEFOREEND);
+render(siteFooter, counterComponent, RenderPosition.BEFOREEND);
