@@ -15,7 +15,8 @@ import {generateMovie} from "./mock/movie.js";
 import {getComments} from "./mock/comment.js";
 import {generateFilter} from "./mock/filter.js";
 import {generateUserRank} from "./mock/user-rank.js";
-import {render, RenderPosition, isKeyEscape} from "./utils.js";
+import {render, RenderPosition} from "./utils/render.js";
+import {isKeyEscape} from "./utils/common.js"
 
 const MOVIE_COUNT = 23;
 const MOVIE_COUNT_PER_STEP = 5;

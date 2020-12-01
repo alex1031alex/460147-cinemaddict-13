@@ -1,5 +1,5 @@
 import AbstractView from "./abstract.js";
-import {convertToHourFormat} from "../utils.js";
+import {convertToHourFormat} from "../utils/movie.js";
 
 const formateReleaseDate = (date) => {
   const day = date.toLocaleString(`en-US`, {day: `2-digit`});

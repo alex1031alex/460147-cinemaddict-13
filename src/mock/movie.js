@@ -1,5 +1,5 @@
 import {nanoid} from 'nanoid';
-import {getRandomInteger, getRandomItem} from "../utils.js";
+import {getRandomInteger, getRandomItem} from "../utils/common.js";
 import {generateComment} from "./comment.js";
 
 const GenresCount = {

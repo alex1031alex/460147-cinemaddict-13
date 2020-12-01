@@ -1,5 +1,5 @@
 import AbstractView from "./abstract.js";
-import {convertToHourFormat} from "../utils.js";
+import {convertToHourFormat} from "../utils/movie.js";
 
 const MAX_BRIEF_LENGTH = 140;
 const ACTIVE_CLASS = `film-card__controls-item--active`;
