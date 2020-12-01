@@ -46,11 +46,6 @@ const renderMovie = (container, movie) => {
     page.classList.remove(OVERFLOW_HIDE_CLASS);
   };
 
-  const movieTitle = movieComponent.getElement().querySelector(`.film-card__title`);
-  const moviePoster = movieComponent.getElement().querySelector(`.film-card__poster`);
-  const commentsLink = movieComponent.getElement().querySelector(`.film-card__comments`);
-  const popupCloseButton = popupComponent.getElement().querySelector(`.film-details__close-btn`);
-
   const onEscKeyDown = (evt) => {
     if (isKeyEscape(evt.key)) {
       evt.preventDefault();
@@ -59,16 +54,12 @@ const renderMovie = (container, movie) => {
     }
   };
 
-  movieComponent.getElement().addEventListener(`click`, (evt) => {
-    if (evt.target === movieTitle || evt.target === moviePoster || evt.target === commentsLink) {
-      evt.preventDefault();
-      openPopup();
-      document.addEventListener(`keydown`, onEscKeyDown);
-    }
+  movieComponent.setClickHandler(() => {
+    openPopup();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  popupCloseButton.addEventListener(`click`, (evt) => {
-    evt.preventDefault();
+  popupComponent.setCloseButtonClickHandler(() => {
     closePopup();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
@@ -124,11 +115,10 @@ const renderBoard = (boardContainer, moviesToRender) => {
 
     render(mainList, showMoreButtonComponent.getElement(), RenderPosition.AFTEREND);
 
-    showMoreButtonComponent.getElement().addEventListener(`click`, (evt) => {
-      evt.preventDefault();
+    showMoreButtonComponent.setClickHandler(() => {
       moviesToRender
-        .slice(renderedMovieCount, renderedMovieCount + MOVIE_COUNT_PER_STEP)
-        .forEach((movie) => renderMovie(mainList, movie));
+      .slice(renderedMovieCount, renderedMovieCount + MOVIE_COUNT_PER_STEP)
+      .forEach((movie) => renderMovie(mainList, movie));
 
       renderedMovieCount += MOVIE_COUNT_PER_STEP;
 
