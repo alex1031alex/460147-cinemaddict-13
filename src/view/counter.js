@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
 const createCounterTemplate = (movieCount) => (
   `<section class="footer__statistics">
@@ -6,25 +6,13 @@ const createCounterTemplate = (movieCount) => (
   </section>`
 );
 
-export default class Counter {
+export default class Counter extends AbstractView {
   constructor(movieCount) {
+    super();
     this._movieCount = movieCount;
-    this._element = null;
   }
 
   getTemplate() {
     return createCounterTemplate(this._movieCount);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

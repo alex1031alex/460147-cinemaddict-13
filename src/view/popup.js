@@ -1,5 +1,5 @@
-import {createElement} from "../utils.js";
-import {convertToHourFormat} from "../utils.js";
+import AbstractView from "./abstract.js";
+import {convertToHourFormat} from "../utils/movie.js";
 
 const formateReleaseDate = (date) => {
   const day = date.toLocaleString(`en-US`, {day: `2-digit`});
@@ -229,27 +229,29 @@ const createPopupTemplate = (movie, comments) => {
   </section>`;
 };
 
-export default class Popup {
+export default class Popup extends AbstractView {
   constructor(movie, comments = []) {
+    super();
     this._movie = movie;
     this._comments = comments;
 
-    this._element = null;
+    this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
   }
 
   getTemplate() {
     return createPopupTemplate(this._movie, this._comments);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _closeButtonClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeButtonClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setCloseButtonClickHandler(callback) {
+    this._callback.closeButtonClick = callback;
+
+    this.getElement()
+      .querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, this._closeButtonClickHandler);
   }
 }

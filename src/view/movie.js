@@ -1,5 +1,5 @@
-import {createElement} from "../utils.js";
-import {convertToHourFormat} from "../utils.js";
+import AbstractView from "./abstract.js";
+import {convertToHourFormat} from "../utils/movie.js";
 
 const MAX_BRIEF_LENGTH = 140;
 const ACTIVE_CLASS = `film-card__controls-item--active`;
@@ -82,25 +82,32 @@ const createMovieTemplate = (movie) => {
   </article>`;
 };
 
-export default class Movie {
+export default class Movie extends AbstractView {
   constructor(movie) {
+    super();
     this._movie = movie;
-    this._element = null;
+
+    this._clickHandler = this._clickHandler.bind(this);
   }
 
   getTemplate() {
     return createMovieTemplate(this._movie);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
+  _clickHandler(evt) {
+    evt.preventDefault();
 
-    return this._element;
+    const movieTitle = this.getElement().querySelector(`.film-card__title`);
+    const moviePoster = this.getElement().querySelector(`.film-card__poster`);
+    const commentsLink = this.getElement().querySelector(`.film-card__comments`);
+
+    if (evt.target === movieTitle || evt.target === moviePoster || evt.target === commentsLink) {
+      this._callback.click();
+    }
   }
 
-  removeElement() {
-    this._element = null;
+  setClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().addEventListener(`click`, this._clickHandler);
   }
 }
