@@ -16,6 +16,11 @@ export default class Board {
     this._boardContainer = boardContainer;
     this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
     this._movies = null;
+    this._moviePresenter = {
+      mainList: {},
+      topRatedList: {},
+      mostCommentedList: {}
+    };
 
     this._boardComponent = new BoardView();
     this._board = this._boardComponent.getElement();
@@ -39,9 +44,10 @@ export default class Board {
     render(this._board, this._noMoviesComponent, RenderPosition.AFTERBEGIN);
   }
 
-  _renderMovie(container, movie) {
+  _renderMovie(container, movie, presenterList) {
     const moviePresenter = new MoviePresenter(container);
     moviePresenter.init(movie);
+    presenterList[movie.id] = moviePresenter;
   }
 
   _renderSort() {
@@ -55,7 +61,7 @@ export default class Board {
 
     this._movies
       .slice(0, Math.min(MOVIE_COUNT_PER_STEP, this._movies.length))
-      .forEach((movie) => this._renderMovie(movieContainer, movie));
+      .forEach((movie) => this._renderMovie(movieContainer, movie, this._moviePresenter.mainList));
 
     if (this._movies.length > MOVIE_COUNT_PER_STEP) {
       this._renderShowMoreButton(movieContainer);
@@ -75,7 +81,11 @@ export default class Board {
       .sort((a, b) => b.rating - a.rating)
       .slice(0, EXTRA_MOVIE_COUNT);
 
-    topRatedMovies.forEach((movie) => this._renderMovie(movieContainer, movie));
+    topRatedMovies.forEach((movie) => this._renderMovie(
+        movieContainer, 
+        movie,
+        this._moviePresenter.topRatedList
+    ));
   }
 
   _renderMostCommentedMovies() {
@@ -91,7 +101,11 @@ export default class Board {
       .sort((a, b) => b.comments.length - a.comments.length)
       .slice(0, EXTRA_MOVIE_COUNT);
 
-    mostCommentedMovies.forEach((movie) => this._renderMovie(movieContainer, movie));
+    mostCommentedMovies.forEach((movie) => this._renderMovie(
+        movieContainer,
+        movie,
+        this._moviePresenter.mostCommentedList
+    ));
   }
 
   _renderShowMoreButton(movieContainer) {
@@ -100,7 +114,11 @@ export default class Board {
     this._showMoreButtonComponent.setClickHandler(() => {
       this._movies
         .slice(this._renderedMoviesCount, this._renderedMoviesCount + MOVIE_COUNT_PER_STEP)
-        .forEach((movie) => this._renderMovie(movieContainer, movie));
+        .forEach((movie) => this._renderMovie(
+            movieContainer,
+            movie,
+            this._moviePresenter.mainList
+        ));
 
       this._renderedMoviesCount += MOVIE_COUNT_PER_STEP;
 
