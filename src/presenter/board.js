@@ -14,6 +14,7 @@ const EXTRA_MOVIE_COUNT = 2;
 export default class Board {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
+    this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
     this._movies = null;
 
     this._boardComponent = new BoardView();
