@@ -62,6 +62,10 @@ export default class Board {
   }
 
   _renderTopRatedMovies() {
+    if (this._movies.every((movie) => movie.rating === 0)) {
+      return;
+    }
+
     render(this._board, this._topRatedListComponent, RenderPosition.BEFOREEND);
 
     const movieContainer = this._topRatedListComponent.getMovieContainer();
@@ -74,6 +78,10 @@ export default class Board {
   }
 
   _renderMostCommentedMovies() {
+    if (this._movies.every((movie) => movie.comments.length === 0)) {
+      return;
+    }
+
     render(this._board, this._mostCommentedListComponent, RenderPosition.BEFOREEND);
 
     const movieContainer = this._mostCommentedListComponent.getMovieContainer();
