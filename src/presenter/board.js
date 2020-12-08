@@ -4,18 +4,12 @@ import SortView from "../view/sort.js";
 import MainListView from "../view/main-list.js";
 import TopRatedListView from "../view/top-rated-list.js";
 import MostCommentedListView from "../view/most-commented-list.js";
-import MovieView from "../view/movie.js";
-import PopupView from "../view/popup.js";
 import ShowMoreButtonView from "../view/show-more-button.js";
-import {getComments} from "../mock/comment.js";
-import {render, remove, append, RenderPosition} from "../utils/render.js";
-import {isKeyEscape} from "../utils/common.js";
+import MoviePresenter from "./movie.js";
+import {render, remove, RenderPosition} from "../utils/render.js";
 
 const MOVIE_COUNT_PER_STEP = 5;
 const EXTRA_MOVIE_COUNT = 2;
-const OVERFLOW_HIDE_CLASS = `hide-overflow`;
-
-const page = document.querySelector(`body`);
 
 export default class Board {
   constructor(boardContainer) {
@@ -45,38 +39,8 @@ export default class Board {
   }
 
   _renderMovie(container, movie) {
-    const movieComponent = new MovieView(movie);
-    const popupComponent = new PopupView(movie, getComments(movie.id));
-
-    const openPopup = () => {
-      append(page, popupComponent);
-      page.classList.add(OVERFLOW_HIDE_CLASS);
-    };
-
-    const closePopup = () => {
-      remove(popupComponent);
-      page.classList.remove(OVERFLOW_HIDE_CLASS);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (isKeyEscape(evt.key)) {
-        evt.preventDefault();
-        closePopup();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    movieComponent.setClickHandler(() => {
-      openPopup();
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
-
-    popupComponent.setCloseButtonClickHandler(() => {
-      closePopup();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
-
-    render(container, movieComponent, RenderPosition.BEFOREEND);
+    const moviePresenter = new MoviePresenter(container);
+    moviePresenter.init(movie);
   }
 
   _renderSort() {
