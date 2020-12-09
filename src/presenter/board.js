@@ -6,6 +6,7 @@ import TopRatedListView from "../view/top-rated-list.js";
 import MostCommentedListView from "../view/most-commented-list.js";
 import ShowMoreButtonView from "../view/show-more-button.js";
 import MoviePresenter from "./movie.js";
+import {updateItem} from "../utils/common.js";
 import {render, remove, RenderPosition} from "../utils/render.js";
 
 const MOVIE_COUNT_PER_STEP = 5;
@@ -31,6 +32,8 @@ export default class Board {
     this._topRatedListComponent = new TopRatedListView();
     this._mostCommentedListComponent = new MostCommentedListView();
     this._showMoreButtonComponent = new ShowMoreButtonView();
+
+    this._handleMovieChange = this._handleMovieChange.bind(this);
   }
 
   init(movies) {
@@ -42,6 +45,22 @@ export default class Board {
 
   _renderNoMovies() {
     render(this._board, this._noMoviesComponent, RenderPosition.AFTERBEGIN);
+  }
+
+  _handleMovieChange(updatedMovie) {
+    this._movies = updateItem(this._movies, updatedMovie);
+
+    if (this._moviePresenter.mainList[updatedMovie.id]) {
+      this._moviePresenter.mainList[updatedMovie.id].init(updatedMovie);
+    }
+
+    if (this._moviePresenter.topRatedList[updatedMovie.id]) {
+      this._moviePresenter.topRatedList[updatedMovie.id].init(updatedMovie);
+    }
+
+    if (this._moviePresenter.mostCommentedList[updatedMovie.id]) {
+      this._moviePresenter.mostCommentedList[updatedMovie.id].init(updatedMovie);
+    }
   }
 
   _renderMovie(container, movie, presenterList) {
