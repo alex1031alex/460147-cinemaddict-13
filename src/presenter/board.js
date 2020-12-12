@@ -64,7 +64,7 @@ export default class Board {
   }
 
   _renderMovie(container, movie, presenterList) {
-    const moviePresenter = new MoviePresenter(container);
+    const moviePresenter = new MoviePresenter(container, this._handleMovieChange);
     moviePresenter.init(movie);
     presenterList[movie.id] = moviePresenter;
   }
@@ -101,7 +101,7 @@ export default class Board {
       .slice(0, EXTRA_MOVIE_COUNT);
 
     topRatedMovies.forEach((movie) => this._renderMovie(
-        movieContainer, 
+        movieContainer,
         movie,
         this._moviePresenter.topRatedList
     ));

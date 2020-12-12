@@ -8,12 +8,16 @@ const OVERFLOW_HIDE_CLASS = `hide-overflow`;
 const page = document.querySelector(`body`);
 
 export default class Movie {
-  constructor(container) {
+  constructor(container, changeData) {
     this._container = container;
+    this._changeData = changeData;
 
     this._movieComponent = null;
     this._popupComponent = null;
 
+    this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
+    this._handleWatchedClick = this._handleWatchedClick.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleCardClick = this._handleCardClick.bind(this);
     this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this);
@@ -29,6 +33,9 @@ export default class Movie {
     this._popupComponent = new PopupView(movie, getComments(movie.id));
 
     this._movieComponent.setClickHandler(this._handleCardClick);
+    this._movieComponent.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._movieComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._movieComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._popupComponent.setCloseButtonClickHandler(this._handleCloseButtonClick);
 
     if (prevMovieComponent === null || prevPopupComponent === null) {
@@ -79,5 +86,29 @@ export default class Movie {
   _handleCloseButtonClick() {
     this._closePopup();
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
+  }
+
+  _handleWatchlistClick() {
+    const updatedMovie = Object.assign({}, this._movie);
+
+    updatedMovie.userInfo = JSON.parse(JSON.stringify(updatedMovie.userInfo));
+    updatedMovie.userInfo.isAtWatchlist = !updatedMovie.userInfo.isAtWatchlist;
+    this._changeData(updatedMovie);
+  }
+
+  _handleWatchedClick() {
+    const updatedMovie = Object.assign({}, this._movie);
+
+    updatedMovie.userInfo = JSON.parse(JSON.stringify(updatedMovie.userInfo));
+    updatedMovie.userInfo.isWatched = !updatedMovie.userInfo.isWatched;
+    this._changeData(updatedMovie);
+  }
+
+  _handleFavoriteClick() {
+    const updatedMovie = Object.assign({}, this._movie);
+
+    updatedMovie.userInfo = JSON.parse(JSON.stringify(updatedMovie.userInfo));
+    updatedMovie.userInfo.isFavorite = !updatedMovie.userInfo.isFavorite;
+    this._changeData(updatedMovie);
   }
 }
