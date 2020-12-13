@@ -98,12 +98,24 @@ export default class Board {
     }
   }
 
+  _clearMainList() {
+    Object
+      .values(this._moviePresenter.mainList)
+      .forEach((presenter) => presenter.destroy());
+    this._moviePresenter.mainList = {};
+    this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
+    remove(this._showMoreButtonComponent);
+  }
+
   _handleSortTypeChange(sortType) {
     if (sortType === this._currentSortType) {
       return;
     }
 
     this._sortMovies(sortType);
+    this._clearMainList();
+    this._renderMainListMovies();
+
     this._currentSortType = sortType;
   }
 
@@ -123,7 +135,7 @@ export default class Board {
   }
 
   _renderMainListMovies() {
-    render(this._board, this._mainListComponent, RenderPosition.BEFOREEND);
+    render(this._board, this._mainListComponent, RenderPosition.AFTERBEGIN);
 
     const movieContainer = this._mainListComponent.getMovieContainer();
 
