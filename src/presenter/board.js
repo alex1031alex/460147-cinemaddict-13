@@ -8,6 +8,8 @@ import ShowMoreButtonView from "../view/show-more-button.js";
 import MoviePresenter from "./movie.js";
 import {updateItem} from "../utils/common.js";
 import {render, remove, RenderPosition} from "../utils/render.js";
+import {sortByDate, sortByRating} from "../utils/movie.js";
+import {SortType} from "../const.js";
 
 const MOVIE_COUNT_PER_STEP = 5;
 const EXTRA_MOVIE_COUNT = 2;
@@ -16,12 +18,12 @@ export default class Board {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
     this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
-    this._movies = null;
     this._moviePresenter = {
       mainList: {},
       topRatedList: {},
       mostCommentedList: {}
     };
+    this._currentSortType = SortType.DEFAULT;
 
     this._boardComponent = new BoardView();
     this._board = this._boardComponent.getElement();
@@ -40,6 +42,7 @@ export default class Board {
 
   init(movies) {
     this._movies = movies.slice();
+    this._sourcedMovies = movies.slice();
 
     render(this._boardContainer, this._boardComponent, RenderPosition.BEFOREEND);
     this._renderBoard();
@@ -79,8 +82,29 @@ export default class Board {
       .forEach((presenter) => presenter.resetView());
   }
 
-  _handleSortTypeChange() {
+  _sortMovies(sortType) {
+    switch (sortType) {
+      case SortType.DATE: {
+        this._movies.sort(sortByDate);
+        break;
+      }
+      case SortType.RATING: {
+        this._movies.sort(sortByRating);
+        break;
+      }
+      default: {
+        this._movies = this._sourcedMovies.slice();
+      }
+    }
+  }
 
+  _handleSortTypeChange(sortType) {
+    if (sortType === this._currentSortType) {
+      return;
+    }
+
+    this._sortMovies(sortType);
+    this._currentSortType = sortType;
   }
 
   _renderMovie(container, movie, presenterList) {

@@ -8,3 +8,11 @@ export const convertToHourFormat = (timeInMinutes) => {
 
   return `${hours}h ${minutes}m`;
 };
+
+export const sortByDate = (movieA, movieB) => {
+  return movieB.releaseDate.getTime() - movieA.releaseDate.getTime();
+};
+
+export const sortByRating = (movieA, movieB) => {
+  return movieB.rating - movieA.rating;
+};
