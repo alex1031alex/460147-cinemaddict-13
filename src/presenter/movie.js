@@ -77,13 +77,14 @@ export default class Movie {
   }
 
   _closePopup() {
-    remove(this._popupComponent);
+    this._popupComponent.getElement().remove();
     page.classList.remove(OVERFLOW_HIDE_CLASS);
   }
 
   resetView() {
     if (this._mode !== Mode.DEFAULT) {
       this._closePopup();
+      document.removeEventListener(`keydown`, this._escKeyDownHandler);
       this._mode = Mode.DEFAULT;
     }
   }
