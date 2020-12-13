@@ -35,6 +35,7 @@ export default class Board {
 
     this._handleMovieChange = this._handleMovieChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
   init(movies) {
@@ -78,6 +79,10 @@ export default class Board {
       .forEach((presenter) => presenter.resetView());
   }
 
+  _handleSortTypeChange() {
+
+  }
+
   _renderMovie(container, movie, presenterList) {
     const moviePresenter = new MoviePresenter(
         container,
@@ -90,6 +95,7 @@ export default class Board {
 
   _renderSort() {
     render(this._board, this._sortComponent, RenderPosition.BEFOREBEGIN);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderMainListMovies() {
