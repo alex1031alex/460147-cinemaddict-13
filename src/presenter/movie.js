@@ -5,15 +5,22 @@ import {render, append, remove, replace, RenderPosition} from "../utils/render.j
 import {isKeyEscape} from "../utils/common.js";
 
 const OVERFLOW_HIDE_CLASS = `hide-overflow`;
+const Mode = {
+  DEFAULT: `default`,
+  POPUP: `popup`
+};
+
 const page = document.querySelector(`body`);
 
 export default class Movie {
-  constructor(container, changeData) {
+  constructor(container, changeData, changeMode) {
     this._container = container;
     this._changeData = changeData;
+    this._changeMode = changeMode;
 
     this._movieComponent = null;
     this._popupComponent = null;
+    this._mode = Mode.DEFAULT;
 
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
@@ -74,22 +81,33 @@ export default class Movie {
     page.classList.remove(OVERFLOW_HIDE_CLASS);
   }
 
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._closePopup();
+      this._mode = Mode.DEFAULT;
+    }
+  }
+
   _escKeyDownHandler(evt) {
     if (isKeyEscape(evt.key)) {
       evt.preventDefault();
       this._closePopup();
       document.removeEventListener(`keydown`, this._escKeyDownHandler);
+      this._mode = Mode.DEFAULT;
     }
   }
 
   _handleCardClick() {
+    this._changeMode();
     this._openPopup();
     document.addEventListener(`keydown`, this._escKeyDownHandler);
+    this._mode = Mode.POPUP;
   }
 
   _handleCloseButtonClick() {
     this._closePopup();
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
+    this._mode = Mode.DEFAULT;
   }
 
   _handleWatchlistClick() {
