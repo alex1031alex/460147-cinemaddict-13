@@ -255,9 +255,7 @@ export default class Popup extends AbstractView {
     this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
     this._emojiClickHandler = this._emojiClickHandler.bind(this);
 
-    this.getElement()
-      .querySelector(`.film-details__emoji-list`)
-      .addEventListener(`click`, this._emojiClickHandler);
+    this._setInnerHandlers();
   }
 
   getTemplate() {
@@ -328,6 +326,8 @@ export default class Popup extends AbstractView {
     );
 
     this.updateElement();
+
+    this.restoreHandlers();
   }
 
   updateElement() {
@@ -356,5 +356,20 @@ export default class Popup extends AbstractView {
     });
 
     this.getElement().scrollTop = this.getElement().scrollHeight;
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector(`.film-details__emoji-list`)
+      .addEventListener(`click`, this._emojiClickHandler);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+
+    this.setCloseButtonClickHandler(this._callback.closeButtonClick);
+    this.setWatchlistClickHandler(this._callback.watchlistClick);
+    this.setWatchedClickHandler(this._callback.watchedClick);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
   }
 }
