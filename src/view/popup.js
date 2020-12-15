@@ -1,4 +1,4 @@
-import AbstractView from "./abstract.js";
+import SmartView from "./smart.js";
 import {convertToHourFormat} from "../utils/movie.js";
 
 const BLANK_COMMENT = {
@@ -242,7 +242,7 @@ const createPopupTemplate = (movie, comments, localComment) => {
   </section>`;
 };
 
-export default class Popup extends AbstractView {
+export default class Popup extends SmartView {
   constructor(movie, comments = []) {
     super();
     this._movie = movie;
@@ -312,32 +312,6 @@ export default class Popup extends AbstractView {
     .getElement()
     .querySelector(`#favorite`)
     .addEventListener(`click`, this._favoriteClickHandler);
-  }
-
-  updateLocalData(update) {
-    if (!update) {
-      return;
-    }
-
-    this._localData = Object.assign(
-        {},
-        this._localData,
-        update
-    );
-
-    this.updateElement();
-
-    this.restoreHandlers();
-  }
-
-  updateElement() {
-    let prevElement = this.getElement();
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.getElement();
-
-    parent.replaceChild(newElement, prevElement);
   }
 
   _emojiClickHandler(evt) {
