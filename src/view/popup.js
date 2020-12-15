@@ -296,4 +296,14 @@ export default class Popup extends AbstractView {
     .querySelector(`#favorite`)
     .addEventListener(`click`, this._favoriteClickHandler);
   }
+
+  updateElement() {
+    let prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
+  }
 }
