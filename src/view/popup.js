@@ -253,6 +253,11 @@ export default class Popup extends AbstractView {
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
+    this._emojiClickHandler = this._emojiClickHandler.bind(this);
+
+    this.getElement()
+      .querySelector(`.film-details__emoji-list`)
+      .addEventListener(`click`, this._emojiClickHandler);
   }
 
   getTemplate() {
@@ -333,5 +338,23 @@ export default class Popup extends AbstractView {
     const newElement = this.getElement();
 
     parent.replaceChild(newElement, prevElement);
+  }
+
+  _emojiClickHandler(evt) {
+    evt.preventDefault();
+
+    if (evt.target.tagName !== `IMG`) {
+      return;
+    }
+
+    const emotion = evt.target.parentElement
+      .getAttribute(`for`)
+      .substring(`emogi-`.length);
+
+    this.updateLocalData({
+      emotion
+    });
+
+    this.getElement().scrollTop = this.getElement().scrollHeight;
   }
 }
