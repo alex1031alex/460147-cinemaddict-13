@@ -1,10 +1,14 @@
-export const convertToHourFormat = (timeInMinutes) => {
-  if (timeInMinutes < 60) {
-    return `${timeInMinutes}m`;
-  }
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+dayjs.extend(duration);
 
-  const hours = Math.floor(timeInMinutes / 60);
-  const minutes = timeInMinutes - (hours * 60);
+export const convertToHourFormat = (timeInMinutes) => {
+  const hours = dayjs.duration(timeInMinutes, `m`).hours();
+  const minutes = dayjs.duration(timeInMinutes, `m`).minutes();
+
+  if (hours === 0) {
+    return `${minutes}m`;
+  }
 
   return `${hours}h ${minutes}m`;
 };
