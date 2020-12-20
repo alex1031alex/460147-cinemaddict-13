@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import SmartView from "./smart.js";
 import {convertToHourFormat} from "../utils/movie.js";
+dayjs.extend(relativeTime);
 
 const BLANK_COMMENT = {
   comment: ``,
@@ -9,15 +11,9 @@ const BLANK_COMMENT = {
 };
 
 const formateCommentDate = (date) => {
-  const year = date.toLocaleString(`en-US`, {year: `numeric`});
-  const month = date.toLocaleString(`en-US`, {month: `2-digit`});
-  const day = date.toLocaleString(`en-US`, {day: `2-digit`});
-  const time = date.toLocaleString(
-      `en-US`,
-      {hour: `2-digit`, minute: `2-digit`, hour12: false}
-  );
+  const now = dayjs();
 
-  return `${year}/${month}/${day} ${time}`;
+  return dayjs.duration(-now.diff(date)).humanize(true);
 };
 
 const createCommentTemplate = (comment) => {
