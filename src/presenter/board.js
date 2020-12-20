@@ -6,7 +6,6 @@ import TopRatedListView from "../view/top-rated-list.js";
 import MostCommentedListView from "../view/most-commented-list.js";
 import ShowMoreButtonView from "../view/show-more-button.js";
 import MoviePresenter from "./movie.js";
-import {updateItem} from "../utils/common.js";
 import {render, remove, RenderPosition} from "../utils/render.js";
 import {sortByDate, sortByRating} from "../utils/movie.js";
 import {SortType, UserAction, UpdateType} from "../const.js";
@@ -40,6 +39,8 @@ export default class Board {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+
+    this._moviesModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -64,9 +65,7 @@ export default class Board {
     render(this._board, this._noMoviesComponent, RenderPosition.AFTERBEGIN);
   }
 
-  _handleMovieChange(updatedMovie) {
-    this._movies = updateItem(this._movies, updatedMovie);
-
+  _updateMovie(updatedMovie) {
     if (this._moviePresenter.mainList[updatedMovie.id]) {
       this._moviePresenter.mainList[updatedMovie.id].init(updatedMovie);
     }
@@ -80,12 +79,38 @@ export default class Board {
     }
   }
 
-  _handleViewAction() {
-
+  _handleViewAction(actionType, updateType, update) {
+    switch (actionType) {
+      case UserAction.UPDATE_MOVIE: {
+        this._moviesModel.update(updateType, update);
+        break;
+      }
+      case UserAction.DELETE_COMMENT: {
+        this._moviesModel.update(updateType, update);
+        break;
+      }
+      case UserAction.ADD_COMMENT: {
+        this._moviesModel.update(updateType, update);
+        break;
+      }
+    }
   }
 
-  _handleModelEvent() {
-
+  _handleModelEvent(updateType, update) {
+    switch (updateType) {
+      case UpdateType.PATCH: {
+        this._updateMovie(update);
+        break;
+      }
+      case UpdateType.MINOR: {
+        this._clearBoard();
+        this._renderBoard();
+        break;
+      }
+      case UpdateType.MAJOR: {
+        break;
+      }
+    }
   }
 
   _handleModeChange() {
@@ -107,8 +132,28 @@ export default class Board {
       .values(this._moviePresenter.mainList)
       .forEach((presenter) => presenter.destroy());
     this._moviePresenter.mainList = {};
-    this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
+  }
+
+  _clearTopRatedList() {
+    Object
+      .values(this._moviePresenter.topRatedList)
+      .forEach((presenter) => presenter.destroy());
+    this._moviePresenter.topRatedList = {};
+  }
+
+  _clearMostCommentedList() {
+    Object
+      .values(this._moviePresenter.mostCommentedList)
+      .forEach((presenter) => presenter.destroy());
+    this._moviePresenter.mostCommentedList = {};
+  }
+
+  _clearBoard() {
+    this._clearMainList();
     remove(this._showMoreButtonComponent);
+
+    this._clearTopRatedList();
+    this._clearMostCommentedList();
   }
 
   _handleSortTypeChange(sortType) {
@@ -143,7 +188,7 @@ export default class Board {
     const movies = this._getMovies();
 
     movies
-      .slice(0, Math.min(MOVIE_COUNT_PER_STEP, movies.length))
+      .slice(0, Math.min(this._renderedMoviesCount, movies.length))
       .forEach((movie) => this._renderMovie(movieContainer, movie, this._moviePresenter.mainList));
 
     if (movies.length > MOVIE_COUNT_PER_STEP) {
