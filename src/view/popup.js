@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import SmartView from "./smart.js";
 import {convertToHourFormat} from "../utils/movie.js";
 
@@ -5,14 +6,6 @@ const BLANK_COMMENT = {
   comment: ``,
   date: ``,
   emotion: ``
-};
-
-const formateReleaseDate = (date) => {
-  const day = date.toLocaleString(`en-US`, {day: `2-digit`});
-  const month = date.toLocaleString(`en-US`, {month: `long`});
-  const year = date.toLocaleString(`en-US`, {year: `numeric`});
-
-  return `${day} ${month} ${year}`;
 };
 
 const formateCommentDate = (date) => {
@@ -88,7 +81,7 @@ const createPopupTemplate = (movie, comments, localComment) => {
 
   const formattedRuntime = convertToHourFormat(runtime);
   const formattedRating = rating.toFixed(1);
-  const formattedReleaseDate = formateReleaseDate(releaseDate);
+  const formattedReleaseDate = dayjs(releaseDate).format(`DD MMMM YYYY`);
   const watchlistButtonChecked = isAtWatchlist ? `checked` : ``;
   const watchedButtonChecked = isWatched ? `checked` : ``;
   const favoriteButtonChecked = isFavorite ? `checked` : ``;

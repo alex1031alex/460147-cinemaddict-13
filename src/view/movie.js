@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import AbstractView from "./abstract.js";
 import {convertToHourFormat} from "../utils/movie.js";
 
@@ -22,7 +23,7 @@ const createMovieTemplate = (movie) => {
   } = movie;
 
   const formattedRating = rating.toFixed(1);
-  const year = releaseDate.getFullYear();
+  const year = dayjs(releaseDate).year();
   const genre = genres[0];
   const formattedRuntime = convertToHourFormat(runtime);
 
