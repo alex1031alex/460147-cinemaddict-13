@@ -37,6 +37,6 @@ const siteNavigation = siteMain.querySelector(`.main-navigation`);
 render(siteNavigation, filterComponent, RenderPosition.AFTERBEGIN);
 
 const boardPresenter = new BoardPresenter(siteMain, moviesModel);
-boardPresenter.init(movies);
+boardPresenter.init();
 
 render(siteFooter, counterComponent, RenderPosition.BEFOREEND);
