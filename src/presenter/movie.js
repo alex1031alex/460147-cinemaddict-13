@@ -3,6 +3,7 @@ import PopupView from "../view/popup.js";
 import {getComments} from "../mock/comment.js";
 import {render, append, remove, replace, RenderPosition} from "../utils/render.js";
 import {isKeyEscape} from "../utils/common.js";
+import {UserAction, UpdateType} from "../const.js";
 
 const OVERFLOW_HIDE_CLASS = `hide-overflow`;
 const Mode = {
@@ -116,7 +117,7 @@ export default class Movie {
 
     updatedMovie.userInfo = JSON.parse(JSON.stringify(updatedMovie.userInfo));
     updatedMovie.userInfo.isAtWatchlist = !updatedMovie.userInfo.isAtWatchlist;
-    this._changeData(updatedMovie);
+    this._changeData(UserAction.UPDATE_MOVIE, UpdateType.MINOR, updatedMovie);
   }
 
   _handleWatchedClick() {
@@ -124,7 +125,7 @@ export default class Movie {
 
     updatedMovie.userInfo = JSON.parse(JSON.stringify(updatedMovie.userInfo));
     updatedMovie.userInfo.isWatched = !updatedMovie.userInfo.isWatched;
-    this._changeData(updatedMovie);
+    this._changeData(UserAction.UPDATE_MOVIE, UpdateType.MINOR, updatedMovie);
   }
 
   _handleFavoriteClick() {
@@ -132,6 +133,6 @@ export default class Movie {
 
     updatedMovie.userInfo = JSON.parse(JSON.stringify(updatedMovie.userInfo));
     updatedMovie.userInfo.isFavorite = !updatedMovie.userInfo.isFavorite;
-    this._changeData(updatedMovie);
+    this._changeData(UserAction.UPDATE_MOVIE, UpdateType.MINOR, updatedMovie);
   }
 }

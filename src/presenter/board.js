@@ -9,7 +9,7 @@ import MoviePresenter from "./movie.js";
 import {updateItem} from "../utils/common.js";
 import {render, remove, RenderPosition} from "../utils/render.js";
 import {sortByDate, sortByRating} from "../utils/movie.js";
-import {SortType} from "../const.js";
+import {SortType, UserAction, UpdateType} from "../const.js";
 
 const MOVIE_COUNT_PER_STEP = 5;
 const EXTRA_MOVIE_COUNT = 2;
@@ -36,7 +36,8 @@ export default class Board {
     this._mostCommentedListComponent = new MostCommentedListView();
     this._showMoreButtonComponent = new ShowMoreButtonView();
 
-    this._handleMovieChange = this._handleMovieChange.bind(this);
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
@@ -79,6 +80,14 @@ export default class Board {
     }
   }
 
+  _handleViewAction() {
+
+  }
+
+  _handleModelEvent() {
+
+  }
+
   _handleModeChange() {
     Object
       .values(this._moviePresenter.mainList)
@@ -115,7 +124,7 @@ export default class Board {
   _renderMovie(container, movie, presenterList) {
     const moviePresenter = new MoviePresenter(
         container,
-        this._handleMovieChange,
+        this._handleViewAction,
         this._handleModeChange
     );
     moviePresenter.init(movie);
