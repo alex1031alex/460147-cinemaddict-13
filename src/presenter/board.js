@@ -15,8 +15,9 @@ const MOVIE_COUNT_PER_STEP = 5;
 const EXTRA_MOVIE_COUNT = 2;
 
 export default class Board {
-  constructor(boardContainer) {
+  constructor(boardContainer, moviesModel) {
     this._boardContainer = boardContainer;
+    this._moviesModel = moviesModel;
     this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
     this._moviePresenter = {
       mainList: {},

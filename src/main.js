@@ -6,6 +6,7 @@ import {generateMovie} from "./mock/movie.js";
 import {generateFilter} from "./mock/filter.js";
 import {generateUserRank} from "./mock/user-rank.js";
 import BoardPresenter from "./presenter/board.js";
+import MoviesModel from "./model/movies.js";
 import {render, RenderPosition} from "./utils/render.js";
 
 const MOVIE_COUNT = 23;
@@ -15,6 +16,9 @@ const watchedMovies = movies.filter((movie) => movie.userInfo.isWatched);
 
 const filters = generateFilter(movies);
 const userRank = generateUserRank(watchedMovies.length);
+
+const moviesModel = new MoviesModel();
+moviesModel.set(movies);
 
 const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
@@ -32,7 +36,7 @@ const siteNavigation = siteMain.querySelector(`.main-navigation`);
 
 render(siteNavigation, filterComponent, RenderPosition.AFTERBEGIN);
 
-const boardPresenter = new BoardPresenter(siteMain);
+const boardPresenter = new BoardPresenter(siteMain, moviesModel);
 boardPresenter.init(movies);
 
 render(siteFooter, counterComponent, RenderPosition.BEFOREEND);
