@@ -180,6 +180,8 @@ export default class Board {
     }
 
     this._currentSortType = sortType;
+    this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
+
     this._clearMainList();
     this._renderMainListMovies();
   }
