@@ -8,6 +8,7 @@ import {generateUserRank} from "./mock/user-rank.js";
 import BoardPresenter from "./presenter/board.js";
 import MoviesModel from "./model/movies.js";
 import {render, RenderPosition} from "./utils/render.js";
+import {FilterName} from "./const.js";
 
 const MOVIE_COUNT = 23;
 
@@ -26,7 +27,7 @@ const siteFooter = document.querySelector(`.footer`);
 
 const userProfileComponent = new UserProfileView(userRank);
 const menuComponent = new MenuView();
-const filterComponent = new FilterView(filters);
+const filterComponent = new FilterView(filters, FilterName.ALL_MOVIES);
 const counterComponent = new CounterView(movies.length);
 
 render(siteHeader, userProfileComponent, RenderPosition.BEFOREEND);
