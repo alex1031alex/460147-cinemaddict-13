@@ -51,7 +51,6 @@ export default class Filter {
 
   _getFilters() {
     const movies = this._moviesModel.get();
-    console.log(movies);
 
     return Object
       .values(FilterName)

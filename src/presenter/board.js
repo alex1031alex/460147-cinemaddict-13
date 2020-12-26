@@ -114,6 +114,8 @@ export default class Board {
         break;
       }
       case UpdateType.MAJOR: {
+        this._clearBoard(true, true);
+        this._renderBoard();
         break;
       }
     }
@@ -154,12 +156,22 @@ export default class Board {
     this._moviePresenter.mostCommentedList = {};
   }
 
-  _clearBoard() {
+  _clearBoard(resetRenderedMovieCount = false, resetSortType = false) {
     this._clearMainList();
     remove(this._showMoreButtonComponent);
 
     this._clearTopRatedList();
     this._clearMostCommentedList();
+
+    if (resetRenderedMovieCount) {
+      this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
+    } else {
+      this._renderedMoviesCount = Math.min(this._getMovies().length, this._renderedMovieCount);
+    }
+
+    if (resetSortType) {
+      this._currentSortType = SortType.DEFAULT;
+    }
   }
 
   _handleSortTypeChange(sortType) {
