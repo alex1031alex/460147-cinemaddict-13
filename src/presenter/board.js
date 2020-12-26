@@ -51,7 +51,7 @@ export default class Board {
   }
 
   _getMovies() {
-    const filterType = this._filterModel.getFilter();
+    const filterType = this._filterModel.get();
     const movies = this._moviesModel.get();
     const filteredMovies = filter[filterType](movies);
 
