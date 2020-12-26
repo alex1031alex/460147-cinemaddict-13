@@ -24,7 +24,6 @@ export default class Filter {
 
     const filters = this._getFilters();
     const prevFilterComponent = this._filterComponent;
-    console.log(filters);
 
     this._filterComponent = new FilterView(filters, this._currentFilter);
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);

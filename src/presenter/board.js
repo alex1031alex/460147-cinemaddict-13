@@ -7,16 +7,17 @@ import MostCommentedListView from "../view/most-commented-list.js";
 import ShowMoreButtonView from "../view/show-more-button.js";
 import MoviePresenter from "./movie.js";
 import {render, remove, RenderPosition} from "../utils/render.js";
-import {sortByDate, sortByRating} from "../utils/movie.js";
+import {sortByDate, sortByRating, filter} from "../utils/movie.js";
 import {SortType, UserAction, UpdateType} from "../const.js";
 
 const MOVIE_COUNT_PER_STEP = 5;
 const EXTRA_MOVIE_COUNT = 2;
 
 export default class Board {
-  constructor(boardContainer, moviesModel) {
+  constructor(boardContainer, moviesModel, filterModel) {
     this._boardContainer = boardContainer;
     this._moviesModel = moviesModel;
+    this._filterModel = filterModel;
     this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
     this._moviePresenter = {
       mainList: {},
@@ -41,6 +42,7 @@ export default class Board {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._moviesModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -49,16 +51,20 @@ export default class Board {
   }
 
   _getMovies() {
+    const filterType = this._filterModel.getFilter();
+    const movies = this._moviesModel.get();
+    const filteredMovies = filter[filterType](movies);
+
     switch (this._currentSortType) {
       case SortType.DATE: {
-        return this._moviesModel.get().slice().sort(sortByDate);
+        return filteredMovies.sort(sortByDate);
       }
       case SortType.RATING: {
-        return this._moviesModel.get().slice().sort(sortByRating);
+        return filteredMovies.sort(sortByRating);
       }
     }
 
-    return this._moviesModel.get();
+    return filteredMovies;
   }
 
   _renderNoMovies() {

@@ -34,7 +34,7 @@ render(siteMain, menuComponent, RenderPosition.BEFOREEND);
 
 const siteNavigation = siteMain.querySelector(`.main-navigation`);
 
-const boardPresenter = new BoardPresenter(siteMain, moviesModel);
+const boardPresenter = new BoardPresenter(siteMain, moviesModel, filterModel);
 const filterPresenter = new FilterPresenter(siteNavigation, filterModel, moviesModel);
 
 filterPresenter.init();
