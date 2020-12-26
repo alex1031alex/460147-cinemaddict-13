@@ -24,7 +24,7 @@ export const sortByRating = (movieA, movieB) => {
 
 export const filter = {
   [FilterName.ALL_MOVIES]: (movies) => movies,
-  [FilterName.WATCHLIST]: (movies) => movies.filter((movie) => movie.isAtWatchlist),
-  [FilterName.HISTORY]: (movies) => movies.filter((movie) => movie.isWatched),
-  [FilterName.FAVORITES]: (movies) => movies.filter((movie) => movie.isFavorite),
+  [FilterName.WATCHLIST]: (movies) => movies.filter((movie) => movie.userInfo.isAtWatchlist),
+  [FilterName.HISTORY]: (movies) => movies.filter((movie) => movie.userInfo.isWatched),
+  [FilterName.FAVORITES]: (movies) => movies.filter((movie) => movie.userInfo.isFavorite),
 };
