@@ -166,7 +166,7 @@ export default class Board {
     if (resetRenderedMovieCount) {
       this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
     } else {
-      this._renderedMoviesCount = Math.min(this._getMovies().length, this._renderedMovieCount);
+      this._renderedMoviesCount = Math.min(this._getMovies().length, this._renderedMoviesCount);
     }
 
     if (resetSortType) {
@@ -299,7 +299,6 @@ export default class Board {
   _renderBoard() {
     if (this._getMovies().length === 0) {
       this._renderNoMovies();
-
       return;
     }
 
