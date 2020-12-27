@@ -5,7 +5,7 @@ import {convertToHourFormat} from "../utils/movie.js";
 dayjs.extend(relativeTime);
 
 const BLANK_COMMENT = {
-  comment: ``,
+  text: ``,
   date: ``,
   emotion: ``
 };
@@ -86,6 +86,7 @@ const createPopupTemplate = (movie, comments, localComment) => {
   const commentCount = movie.comments.length;
 
   const emotion = localComment.emotion;
+  const commentText = localComment.text;
   const emotionTemplate = emotion
     ? `<img src="./images/emoji/${emotion}.png" width="55" height="55" alt="${emotion}">`
     : ``;
@@ -200,7 +201,7 @@ const createPopupTemplate = (movie, comments, localComment) => {
             </div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentText}</textarea>
             </label>
 
             <div class="film-details__emoji-list">
@@ -243,6 +244,7 @@ export default class Popup extends SmartView {
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
     this._emojiClickHandler = this._emojiClickHandler.bind(this);
+    this._commentInputHandler = this._commentInputHandler.bind(this);
 
     this._setInnerHandlers();
   }
@@ -321,10 +323,23 @@ export default class Popup extends SmartView {
     this.getElement().scrollTop = this.getElement().scrollHeight;
   }
 
+  _commentInputHandler(evt) {
+    evt.preventDefault();
+
+    this.updateLocalData({text: evt.target.value}, true);
+  }
+
   _setInnerHandlers() {
     this.getElement()
       .querySelector(`.film-details__emoji-list`)
       .addEventListener(`click`, this._emojiClickHandler);
+    this.getElement()
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`input`, this._commentInputHandler);
+  }
+
+  getLocalData() {
+    return this._localData;
   }
 
   restoreHandlers() {
