@@ -6,7 +6,7 @@ import TopRatedListView from "../view/top-rated-list.js";
 import MostCommentedListView from "../view/most-commented-list.js";
 import ShowMoreButtonView from "../view/show-more-button.js";
 import MoviePresenter from "./movie.js";
-import {render, remove, RenderPosition} from "../utils/render.js";
+import {render, remove, RenderPosition, replace} from "../utils/render.js";
 import {sortByDate, sortByRating, filter} from "../utils/movie.js";
 import {SortType, UserAction, UpdateType} from "../const.js";
 
@@ -30,7 +30,7 @@ export default class Board {
     this._board = this._boardComponent.getElement();
 
     this._noMoviesComponent = new NoMoviesView();
-    this._sortComponent = new SortView();
+    this._sortComponent = null;
     this._mainListComponent = new MainListView();
     this._topRatedListComponent = new TopRatedListView();
     this._mostCommentedListComponent = new MostCommentedListView();
@@ -182,6 +182,7 @@ export default class Board {
     this._currentSortType = sortType;
     this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
 
+    this._renderSort();
     this._clearMainList();
     this._renderMainListMovies();
   }
@@ -197,8 +198,17 @@ export default class Board {
   }
 
   _renderSort() {
-    render(this._board, this._sortComponent, RenderPosition.BEFOREBEGIN);
+    const prevSortComponent = this._sortComponent;
+    this._sortComponent = new SortView(this._currentSortType);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+
+    if (prevSortComponent === null) {
+      render(this._board, this._sortComponent, RenderPosition.BEFOREBEGIN);
+      return;
+    }
+
+    replace(this._sortComponent, prevSortComponent);
+    remove(prevSortComponent);
   }
 
   _renderMainListMovies() {
