@@ -1,7 +1,7 @@
 import {nanoid} from 'nanoid';
 import MovieView from "../view/movie.js";
 import PopupView from "../view/popup.js";
-import {getComments} from "../mock/comment.js";
+import {getComments, addComment} from "../mock/comment.js";
 import CommentsModel from "../model/comments.js";
 import {render, append, remove, replace, RenderPosition} from "../utils/render.js";
 import {isKeyEscape} from "../utils/common.js";
@@ -166,6 +166,8 @@ export default class Movie {
           UserAction.ADD_COMMENT,
           localComment
       );
+
+      addComment(this._movie.id, localComment);
     }
   }
 

@@ -43,6 +43,10 @@ const generateDate = () => {
   return new Date(currentDate);
 };
 
+export const addComment = (movieId, comment) => {
+  comments[movieId].push(comment);
+};
+
 export const generateComment = (movieId) => {
   if (!comments[movieId]) {
     comments[movieId] = [];
@@ -56,7 +60,7 @@ export const generateComment = (movieId) => {
     text: getRandomItem(texts)
   };
 
-  comments[movieId].push(comment);
+  addComment(movieId, comment);
 
   return comment.id;
 };
