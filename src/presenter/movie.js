@@ -1,7 +1,7 @@
 import {nanoid} from 'nanoid';
 import MovieView from "../view/movie.js";
 import PopupView from "../view/popup.js";
-import {getComments, addComment} from "../mock/comment.js";
+import {getComments, addComment, deleteComment} from "../mock/comment.js";
 import CommentsModel from "../model/comments.js";
 import {render, append, remove, replace, RenderPosition} from "../utils/render.js";
 import {isKeyEscape} from "../utils/common.js";
@@ -178,6 +178,8 @@ export default class Movie {
         UserAction.DELETE_COMMENT,
         commentId
     );
+
+    deleteComment(this._movie.id, commentId);
   }
 
   _handleModelEvent(userAction) {

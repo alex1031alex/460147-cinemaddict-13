@@ -47,6 +47,11 @@ export const addComment = (movieId, comment) => {
   comments[movieId].push(comment);
 };
 
+export const deleteComment = (movieId, commentId) => {
+  comments[movieId] = comments[movieId]
+    .filter((currentComment) => currentComment.id !== commentId);
+};
+
 export const generateComment = (movieId) => {
   if (!comments[movieId]) {
     comments[movieId] = [];
