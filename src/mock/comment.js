@@ -62,5 +62,5 @@ export const generateComment = (movieId) => {
 };
 
 export const getComments = (movieId) => {
-  return comments[movieId];
+  return comments[movieId] || [];
 };

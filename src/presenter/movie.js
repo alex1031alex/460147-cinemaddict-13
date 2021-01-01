@@ -1,11 +1,14 @@
+import {nanoid} from 'nanoid';
 import MovieView from "../view/movie.js";
 import PopupView from "../view/popup.js";
 import {getComments} from "../mock/comment.js";
+import CommentsModel from "../model/comments.js";
 import {render, append, remove, replace, RenderPosition} from "../utils/render.js";
 import {isKeyEscape} from "../utils/common.js";
 import {UserAction, UpdateType} from "../const.js";
 
 const OVERFLOW_HIDE_CLASS = `hide-overflow`;
+const ENTER_KEY = `Enter`;
 const Mode = {
   DEFAULT: `default`,
   POPUP: `popup`
@@ -29,6 +32,11 @@ export default class Movie {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleCardClick = this._handleCardClick.bind(this);
     this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this);
+    this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
+
+    this._commentsModel = new CommentsModel();
+    this._commentsModel.addObserver(this._handleModelEvent);
   }
 
   init(movie) {
@@ -38,7 +46,7 @@ export default class Movie {
     const prevPopupComponent = this._popupComponent;
 
     this._movieComponent = new MovieView(movie);
-    this._popupComponent = new PopupView(movie, getComments(movie.id));
+    this._popupComponent = new PopupView(movie, this._commentsModel.get());
 
     this._movieComponent.setClickHandler(this._handleCardClick);
     this._movieComponent.setWatchlistClickHandler(this._handleWatchlistClick);
@@ -95,6 +103,7 @@ export default class Movie {
       evt.preventDefault();
       this._closePopup();
       document.removeEventListener(`keydown`, this._escKeyDownHandler);
+      document.removeEventListener(`keydown`, this._handleFormSubmit);
       this._mode = Mode.DEFAULT;
     }
   }
@@ -103,12 +112,17 @@ export default class Movie {
     this._changeMode();
     this._openPopup();
     document.addEventListener(`keydown`, this._escKeyDownHandler);
+    document.addEventListener(`keydown`, this._handleFormSubmit);
     this._mode = Mode.POPUP;
+
+    this._commentsModel.set(getComments(this._movie.id));
+    this.init(this._movie);
   }
 
   _handleCloseButtonClick() {
     this._closePopup();
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
+    document.removeEventListener(`keydown`, this._handleFormSubmit);
     this._mode = Mode.DEFAULT;
   }
 
@@ -117,7 +131,7 @@ export default class Movie {
 
     updatedMovie.userInfo = JSON.parse(JSON.stringify(updatedMovie.userInfo));
     updatedMovie.userInfo.isAtWatchlist = !updatedMovie.userInfo.isAtWatchlist;
-    this._changeData(UserAction.UPDATE_MOVIE, UpdateType.MINOR, updatedMovie);
+    this._changeData(UserAction.UPDATE_MOVIE, UpdateType.PATCH, updatedMovie);
   }
 
   _handleWatchedClick() {
@@ -134,5 +148,46 @@ export default class Movie {
     updatedMovie.userInfo = JSON.parse(JSON.stringify(updatedMovie.userInfo));
     updatedMovie.userInfo.isFavorite = !updatedMovie.userInfo.isFavorite;
     this._changeData(UserAction.UPDATE_MOVIE, UpdateType.MINOR, updatedMovie);
+  }
+
+  _handleFormSubmit(evt) {
+    if (evt.ctrlKey && evt.key === ENTER_KEY) {
+      const localComment = this._popupComponent.getLocalData();
+
+      if (localComment.emotion === `` || localComment.text === ``) {
+        return;
+      }
+
+      localComment.date = new Date();
+      localComment.author = `Alex Alexandrov`;
+      localComment.id = nanoid();
+
+      this._commentsModel.add(
+          UserAction.ADD_COMMENT,
+          localComment
+      );
+    }
+  }
+
+  _handleModelEvent(userAction) {
+    switch (userAction) {
+      case UserAction.ADD_COMMENT: {
+        this._changeData(
+            UserAction.ADD_COMMENT,
+            UpdateType.PATCH,
+            Object.assign(
+                {},
+                this._movie,
+                {
+                  comments: this._commentsModel.get().slice().map((comment) => comment.id)
+                }
+            )
+        );
+        break;
+      }
+      case UserAction.DELETE_COMMENT: {
+        break;
+      }
+    }
   }
 }
