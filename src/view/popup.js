@@ -17,7 +17,7 @@ const formateCommentDate = (date) => {
 };
 
 const createCommentTemplate = (comment) => {
-  const {emotion, author, date, text} = comment;
+  const {id, emotion, author, date, text} = comment;
   const formattedDate = formateCommentDate(date);
 
   return (
@@ -30,7 +30,7 @@ const createCommentTemplate = (comment) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${formattedDate}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button class="film-details__comment-delete" data-id="${id}">Delete</button>
         </p>
       </div>
     </li>`
@@ -243,6 +243,7 @@ export default class Popup extends SmartView {
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
     this._emojiClickHandler = this._emojiClickHandler.bind(this);
     this._commentInputHandler = this._commentInputHandler.bind(this);
 
@@ -303,6 +304,20 @@ export default class Popup extends SmartView {
     .getElement()
     .querySelector(`#favorite`)
     .addEventListener(`click`, this._favoriteClickHandler);
+  }
+
+  _deleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(evt.target.dataset.id);
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    const deleteButtons = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+
+    deleteButtons.forEach((button) => {
+      button.addEventListener(`click`, this._deleteClickHandler);
+    });
   }
 
   _emojiClickHandler(evt) {
