@@ -33,6 +33,7 @@ export default class Movie {
     this._handleCardClick = this._handleCardClick.bind(this);
     this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
     this._commentsModel = new CommentsModel();
@@ -57,6 +58,7 @@ export default class Movie {
     this._popupComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._popupComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._popupComponent.setWatchedClickHandler(this._handleWatchedClick);
+    this._popupComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevMovieComponent === null || prevPopupComponent === null) {
       render(this._container, this._movieComponent, RenderPosition.BEFOREEND);
@@ -171,6 +173,13 @@ export default class Movie {
     }
   }
 
+  _handleDeleteClick(commentId) {
+    this._commentsModel.delete(
+        UserAction.DELETE_COMMENT,
+        commentId
+    );
+  }
+
   _handleModelEvent(userAction) {
     switch (userAction) {
       case UserAction.ADD_COMMENT: {
@@ -188,6 +197,17 @@ export default class Movie {
         break;
       }
       case UserAction.DELETE_COMMENT: {
+        this._changeData(
+            UserAction.DELETE_COMMENT,
+            UpdateType.PATCH,
+            Object.assign(
+                {},
+                this._movie,
+                {
+                  comments: this._commentsModel.get().slice()
+                }
+            )
+        );
         break;
       }
     }
