@@ -44,6 +44,10 @@ const generateDate = () => {
 };
 
 export const addComment = (movieId, comment) => {
+  if (!comments[movieId]) {
+    comments[movieId] = [];
+  }
+
   comments[movieId].push(comment);
 };
 
@@ -53,10 +57,6 @@ export const deleteComment = (movieId, commentId) => {
 };
 
 export const generateComment = (movieId) => {
-  if (!comments[movieId]) {
-    comments[movieId] = [];
-  }
-
   const comment = {
     id: nanoid(),
     emotion: getRandomItem(emotions),
