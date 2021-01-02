@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import he from "he";
 import relativeTime from "dayjs/plugin/relativeTime";
 import SmartView from "./smart.js";
 import {convertToHourFormat} from "../utils/movie.js";
@@ -201,7 +202,7 @@ const createPopupTemplate = (movie, comments, localComment) => {
             </div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentText}</textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(commentText)}</textarea>
             </label>
 
             <div class="film-details__emoji-list">
