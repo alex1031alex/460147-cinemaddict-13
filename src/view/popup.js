@@ -335,7 +335,7 @@ export default class Popup extends SmartView {
       emotion
     });
 
-    this.getElement().scrollTop = this.getElement().scrollHeight;
+    this.moveScrollDown();
   }
 
   _commentInputHandler(evt) {
@@ -355,6 +355,10 @@ export default class Popup extends SmartView {
 
   getLocalData() {
     return this._localData;
+  }
+
+  moveScrollDown() {
+    this.getElement().scrollTop = this.getElement().scrollHeight;
   }
 
   restoreHandlers() {

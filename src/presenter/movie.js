@@ -179,6 +179,7 @@ export default class Movie {
       );
 
       addComment(this._movie.id, localComment);
+      this._popupComponent.moveScrollDown();
     }
   }
 
@@ -189,6 +190,7 @@ export default class Movie {
     );
 
     deleteComment(this._movie.id, commentId);
+    this._popupComponent.moveScrollDown();
   }
 
   _handleModelEvent(userAction) {
