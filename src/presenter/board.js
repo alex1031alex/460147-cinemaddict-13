@@ -22,7 +22,11 @@ export default class Board {
     this._moviePresenter = {
       mainList: {},
       topRatedList: {},
-      mostCommentedList: {}
+      mostCommentedList: {},
+      popup: {
+        id: null,
+        presenter: null
+      }
     };
     this._currentSortType = SortType.DEFAULT;
 
@@ -40,6 +44,7 @@ export default class Board {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._handlePopupClose = this._handlePopupClose.bind(this);
 
     this._moviesModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
@@ -83,6 +88,10 @@ export default class Board {
     if (this._moviePresenter.mostCommentedList[updatedMovie.id]) {
       this._moviePresenter.mostCommentedList[updatedMovie.id].init(updatedMovie);
     }
+
+    if (this._moviePresenter.popup.id === updatedMovie.id) {
+      this._moviePresenter.popup.presenter.init(updatedMovie);
+    }
   }
 
   _handleViewAction(actionType, updateType, update) {
@@ -103,25 +112,31 @@ export default class Board {
   }
 
   _handleModelEvent(updateType, update) {
+    if (this._moviePresenter.popup.id === update.id) {
+      this._moviePresenter.popup.presenter.init(update);
+    }
+
     switch (updateType) {
       case UpdateType.PATCH: {
         this._updateMovie(update);
         break;
       }
       case UpdateType.MINOR: {
-        this._clearBoard();
-        this._renderBoard();
+        this._rerenderBoard();
         break;
       }
       case UpdateType.MAJOR: {
-        this._clearBoard(true, true);
-        this._renderBoard();
+        this._rerenderBoard(true, true);
         break;
       }
     }
   }
 
-  _handleModeChange() {
+  _handleModeChange(movieId) {
+    this._moviePresenter.popup.id = movieId;
+    this._moviePresenter.popup.presenter = this._moviePresenter.mainList[movieId] ||
+      this._moviePresenter.topRatedList[movieId] || this._moviePresenter.mostCommentedList[movieId];
+
     Object
       .values(this._moviePresenter.mainList)
       .forEach((presenter) => presenter.resetView());
@@ -133,6 +148,11 @@ export default class Board {
     Object
       .values(this._moviePresenter.mostCommentedList)
       .forEach((presenter) => presenter.resetView());
+  }
+
+  _handlePopupClose() {
+    this._moviePresenter.popup.presenter = null;
+    this._moviePresenter.popup.id = null;
   }
 
   _clearMainList() {
@@ -156,12 +176,16 @@ export default class Board {
     this._moviePresenter.mostCommentedList = {};
   }
 
-  _clearBoard(resetRenderedMovieCount = false, resetSortType = false) {
+  _clearBoard() {
     this._clearMainList();
     remove(this._showMoreButtonComponent);
 
     this._clearTopRatedList();
     this._clearMostCommentedList();
+  }
+
+  _rerenderBoard(resetRenderedMovieCount = false, resetSortType = false) {
+    this._clearBoard();
 
     if (resetRenderedMovieCount) {
       this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
@@ -172,6 +196,8 @@ export default class Board {
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
     }
+
+    this._renderBoard();
   }
 
   _handleSortTypeChange(sortType) {
@@ -191,7 +217,8 @@ export default class Board {
     const moviePresenter = new MoviePresenter(
         container,
         this._handleViewAction,
-        this._handleModeChange
+        this._handleModeChange,
+        this._handlePopupClose
     );
     moviePresenter.init(movie);
     presenterList[movie.id] = moviePresenter;

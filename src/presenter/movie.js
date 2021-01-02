@@ -17,10 +17,11 @@ const Mode = {
 const page = document.querySelector(`body`);
 
 export default class Movie {
-  constructor(container, changeData, changeMode) {
+  constructor(container, changeData, changeMode, onPopupClose) {
     this._container = container;
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._onPopupClose = onPopupClose;
 
     this._movieComponent = null;
     this._popupComponent = null;
@@ -79,7 +80,10 @@ export default class Movie {
 
   destroy() {
     remove(this._movieComponent);
-    remove(this._popupComponent);
+
+    if (this._mode === Mode.DEFAULT) {
+      remove(this._popupComponent);
+    }
   }
 
   _openPopup() {
@@ -107,11 +111,13 @@ export default class Movie {
       document.removeEventListener(`keydown`, this._escKeyDownHandler);
       document.removeEventListener(`keydown`, this._handleFormSubmit);
       this._mode = Mode.DEFAULT;
+
+      this._onPopupClose();
     }
   }
 
   _handleCardClick() {
-    this._changeMode();
+    this._changeMode(this._movie.id);
     this._openPopup();
     document.addEventListener(`keydown`, this._escKeyDownHandler);
     document.addEventListener(`keydown`, this._handleFormSubmit);
@@ -126,6 +132,8 @@ export default class Movie {
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
     document.removeEventListener(`keydown`, this._handleFormSubmit);
     this._mode = Mode.DEFAULT;
+
+    this._onPopupClose();
   }
 
   _handleWatchlistClick() {
@@ -133,7 +141,7 @@ export default class Movie {
 
     updatedMovie.userInfo = JSON.parse(JSON.stringify(updatedMovie.userInfo));
     updatedMovie.userInfo.isAtWatchlist = !updatedMovie.userInfo.isAtWatchlist;
-    this._changeData(UserAction.UPDATE_MOVIE, UpdateType.PATCH, updatedMovie);
+    this._changeData(UserAction.UPDATE_MOVIE, UpdateType.MINOR, updatedMovie);
   }
 
   _handleWatchedClick() {
