@@ -119,6 +119,8 @@ export default class Board {
     switch (updateType) {
       case UpdateType.PATCH: {
         this._updateMovie(update);
+        this._clearMostCommentedList();
+        this._renderMostCommentedMovies();
         break;
       }
       case UpdateType.MINOR: {
