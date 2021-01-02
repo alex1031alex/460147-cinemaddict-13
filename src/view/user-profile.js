@@ -1,8 +1,10 @@
 import AbstractView from "./abstract.js";
 
-const createUserProfileTemplate = (userRank) => (
-  `<section class="header__profile profile">
-    <p class="profile__rating">${userRank}</p>
+const createUserProfileTemplate = (userRank) => {
+  const userRankTemplate = userRank || ``;
+
+  return `<section class="header__profile profile">
+    <p class="profile__rating">${userRankTemplate}</p>
     <img
       class="profile__avatar"
       src="images/bitmap@2x.png"
@@ -10,8 +12,8 @@ const createUserProfileTemplate = (userRank) => (
       width="35"
       height="35"
     >
-  </section>`
-);
+  </section>`;
+};
 
 export default class UserProfile extends AbstractView {
   constructor(userRank) {
