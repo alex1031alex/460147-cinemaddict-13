@@ -1,5 +1,6 @@
 import MenuView from "./view/menu.js";
 import CounterView from "./view/counter.js";
+import StatsView from "./view/stats.js";
 import {generateMovie} from "./mock/movie.js";
 import BoardPresenter from "./presenter/board.js";
 import FilterPresenter from "./presenter/filter.js";
@@ -36,4 +37,5 @@ const filterPresenter = new FilterPresenter(siteNavigation, filterModel, moviesM
 filterPresenter.init();
 boardPresenter.init();
 
+render(siteMain, new StatsView(moviesModel.get()), RenderPosition.BEFOREEND);
 render(siteFooter, counterComponent, RenderPosition.BEFOREEND);
