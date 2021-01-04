@@ -1,5 +1,7 @@
 import dayjs from "dayjs";
-import duration from 'dayjs/plugin/duration';
+import duration from "dayjs/plugin/duration";
+import Chart from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import SmartView from "./smart.js";
 dayjs.extend(duration);
 
@@ -7,14 +9,14 @@ const getGenresStats = (movies) => {
   const genresStats = {};
 
   movies
-  .reduce((acc, movie) => acc.concat(movie.genres), [])
-  .forEach((genre) => {
-    if (genresStats[genre]) {
-      genresStats[genre]++;
-      return;
-    }
-    genresStats[genre] = 1;
-  });
+    .reduce((acc, movie) => acc.concat(movie.genres), [])
+    .forEach((genre) => {
+      if (genresStats[genre]) {
+        genresStats[genre]++;
+        return;
+      }
+      genresStats[genre] = 1;
+    });
 
   return genresStats;
 };
@@ -30,6 +32,84 @@ const getTotalDuration = (movies) => {
 const getTopGenre = (movies) => {
   const genresStats = getGenresStats(movies);
   return Object.entries(genresStats).sort((a, b) => b[1] - a[1])[0][0];
+};
+
+const renderChart = (ctx, movies) => {
+  if (movies.length === 0) {
+    return;
+  }
+
+  const BAR_HEIGHT = 50;
+
+  const labels = [];
+  const counts = [];
+
+  Object
+    .entries(getGenresStats(movies))
+    .sort((a, b) => b[1] - a[1])
+    .forEach(([label, count]) => {
+      labels.push(label);
+      counts.push(count);
+    });
+
+  ctx.height = BAR_HEIGHT * Object.values(labels).length;
+
+  const myChart = new Chart(ctx, {
+    plugins: [ChartDataLabels],
+    type: `horizontalBar`,
+    data: {
+      labels,
+      datasets: [{
+        data: counts,
+        backgroundColor: `#ffe800`,
+        hoverBackgroundColor: `#ffe800`,
+        anchor: `start`
+      }]
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          font: {
+            size: 20
+          },
+          color: `#ffffff`,
+          anchor: `start`,
+          align: `start`,
+          offset: 40,
+        }
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: `#ffffff`,
+            padding: 100,
+            fontSize: 20
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+          barThickness: 24
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false
+      }
+    }
+  });
 };
 
 const crateStatsTemplate = (movies) => {
@@ -90,6 +170,9 @@ export default class Stats extends SmartView {
 
     this._movies = movies;
     this._localData = movies;
+    this._chart = null;
+
+    this._setChart();
   }
 
   getTemplate() {
@@ -101,6 +184,12 @@ export default class Stats extends SmartView {
   }
 
   _setChart() {
+    if (this._chart !== null) {
+      this._chart = null;
+    }
 
+    const ctx = this.getElement().querySelector(`.statistic__chart`);
+
+    this._chart = renderChart(ctx, this._movies);
   }
 }
