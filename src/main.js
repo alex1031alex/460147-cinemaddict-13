@@ -25,9 +25,11 @@ const siteFooter = document.querySelector(`.footer`);
 const userProfilePresenter = new UserProfilePresenter(siteHeader, moviesModel);
 userProfilePresenter.init();
 
-let menuComponent = new MenuView();
+const menuComponent = new MenuView();
 const counterComponent = new CounterView(movies.length);
-const statsComponent = new StatsView(moviesModel.get());
+
+const watchedMovies = moviesModel.get().filter((movie) => movie.userInfo.isWatched);
+const statsComponent = new StatsView(watchedMovies);
 statsComponent.hide();
 
 render(siteMain, menuComponent, RenderPosition.BEFOREEND);
@@ -41,11 +43,11 @@ const handleMenuClick = (menuItem) => {
   if (menuItem === MenuItem.STATS) {
     boardPresenter.hide();
     statsComponent.show();
-    return;
+    filterPresenter.resetActiveFilter();
+  } else {
+    statsComponent.hide();
+    boardPresenter.show();
   }
-
-  statsComponent.hide();
-  boardPresenter.show();
 };
 
 menuComponent.setClickHandler(handleMenuClick);
@@ -54,5 +56,4 @@ filterPresenter.init();
 boardPresenter.init();
 
 render(siteMain, statsComponent, RenderPosition.BEFOREEND);
-
 render(siteFooter, counterComponent, RenderPosition.BEFOREEND);

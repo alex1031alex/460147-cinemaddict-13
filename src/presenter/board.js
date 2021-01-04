@@ -340,7 +340,7 @@ export default class Board {
 
   show() {
     this._board.classList.remove(HIDE_ELEMENT_CLASS);
-    this._sortComponent.remove(HIDE_ELEMENT_CLASS);
+    this._sortComponent.getElement().classList.remove(HIDE_ELEMENT_CLASS);
   }
 
   hide() {
