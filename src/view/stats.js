@@ -1,6 +1,42 @@
+import dayjs from "dayjs";
+import duration from 'dayjs/plugin/duration';
 import SmartView from "./smart.js";
+dayjs.extend(duration);
 
-const crateStatsTemplate = () => {
+const getGenresStats = (movies) => {
+  const genresStats = {};
+
+  movies
+  .reduce((acc, movie) => acc.concat(movie.genres), [])
+  .forEach((genre) => {
+    if (genresStats[genre]) {
+      genresStats[genre]++;
+      return;
+    }
+    genresStats[genre] = 1;
+  });
+
+  return genresStats;
+};
+
+const getTotalDuration = (movies) => {
+  const totalDuration = movies.reduce((acc, movie) => acc + movie.runtime, 0);
+  const hours = dayjs.duration(totalDuration, `m`).hours();
+  const minutes = dayjs.duration(totalDuration, `m`).minutes();
+
+  return {hours, minutes};
+};
+
+const getTopGenre = (movies) => {
+  const genresStats = getGenresStats(movies);
+  return Object.entries(genresStats).sort((a, b) => b[1] - a[1])[0][0];
+};
+
+const crateStatsTemplate = (movies) => {
+  const movieCount = movies.length;
+  const {hours, minutes} = getTotalDuration(movies);
+  const topGenre = getTopGenre(movies);
+
   return `<section class="statistic">
     <p class="statistic__rank">
       Your rank
@@ -30,22 +66,21 @@ const crateStatsTemplate = () => {
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">22 <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${movieCount} <span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${hours} <span class="statistic__item-description">h</span> ${minutes} <span class="statistic__item-description">m</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">Sci-Fi</p>
+        <p class="statistic__item-text">${topGenre}</p>
       </li>
     </ul>
 
     <div class="statistic__chart-wrap">
       <canvas class="statistic__chart" width="1000"></canvas>
     </div>
-
   </section>`;
 };
 
