@@ -8,7 +8,7 @@ import ShowMoreButtonView from "../view/show-more-button.js";
 import MoviePresenter from "./movie.js";
 import {render, remove, RenderPosition, replace} from "../utils/render.js";
 import {sortByDate, sortByRating, filter} from "../utils/movie.js";
-import {SortType, UserAction, UpdateType} from "../const.js";
+import {SortType, UserAction, UpdateType, HIDE_ELEMENT_CLASS} from "../const.js";
 
 const MOVIE_COUNT_PER_STEP = 5;
 const EXTRA_MOVIE_COUNT = 2;
@@ -336,5 +336,19 @@ export default class Board {
     this._renderMainListMovies();
     this._renderTopRatedMovies();
     this._renderMostCommentedMovies();
+  }
+
+  show() {
+    this._board.classList.remove(HIDE_ELEMENT_CLASS);
+    this._sortComponent.remove(HIDE_ELEMENT_CLASS);
+  }
+
+  hide() {
+    this._board.classList.add(HIDE_ELEMENT_CLASS);
+    this._sortComponent.getElement().classList.add(HIDE_ELEMENT_CLASS);
+
+    if (this._moviePresenter.popup.presenter) {
+      this._moviePresenter.popup.presenter.resetView();
+    }
   }
 }

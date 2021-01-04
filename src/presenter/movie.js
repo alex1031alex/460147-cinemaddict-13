@@ -102,6 +102,8 @@ export default class Movie {
       document.removeEventListener(`keydown`, this._escKeyDownHandler);
       document.removeEventListener(`keydown`, this._handleFormSubmit);
       this._mode = Mode.DEFAULT;
+
+      this._onPopupClose();
     }
   }
 

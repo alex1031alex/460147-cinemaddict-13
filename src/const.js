@@ -1,3 +1,5 @@
+export const HIDE_ELEMENT_CLASS = `hidden`;
+
 export const FilterName = {
   ALL_MOVIES: `All movies`,
   WATCHLIST: `Watchlist`,
@@ -21,4 +23,12 @@ export const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
   MAJOR: `MAJOR`
+};
+
+export const MenuItem = {
+  STATS: `Stats`,
+  ALL_MOVIES: `All movies`,
+  WATCHLIST: `Watchlist`,
+  HISTORY: `History`,
+  FAVORITES: `Favorites`
 };
