@@ -8,7 +8,7 @@ import UserProfilePresenter from "./presenter/user-profile.js";
 import MoviesModel from "./model/movies.js";
 import FilterModel from "./model/filter.js";
 import {render, RenderPosition} from "./utils/render.js";
-import { MenuItem } from "./const.js";
+import {MenuItem} from "./const.js";
 
 const MOVIE_COUNT = 23;
 

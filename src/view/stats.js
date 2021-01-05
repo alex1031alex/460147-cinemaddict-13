@@ -5,6 +5,30 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import SmartView from "./smart.js";
 dayjs.extend(duration);
 
+const StatFilter = {
+  ALL_TIME: `all-time`,
+  TODAY: `today`,
+  WEEK: `week`,
+  MONTH: `month`,
+  YEAR: `year`
+};
+
+const filter = {
+  [StatFilter.ALL_TIME]: (movies) => movies,
+
+  [StatFilter.TODAY]: (movies, now = dayjs()) => movies
+    .filter((movie) => dayjs(movie.userInfo.watchingDate).isAfter(now.subtract(1, `day`))),
+
+  [StatFilter.WEEK]: (movies, now = dayjs()) => movies
+    .filter((movie) => dayjs(movie.userInfo.watchingDate).isAfter(now.subtract(1, `week`))),
+
+  [StatFilter.MONTH]: (movies, now = dayjs()) => movies
+    .filter((movie) => dayjs(movie.userInfo.watchingDate).isAfter(now.subtract(1, `month`))),
+
+  [StatFilter.YEAR]: (movies, now = dayjs()) => movies
+    .filter((movie) => dayjs(movie.userInfo.watchingDate).isAfter(now.subtract(1, `year`)))
+};
+
 const getGenresStats = (movies) => {
   const genresStats = {};
 
@@ -30,6 +54,10 @@ const getTotalDuration = (movies) => {
 };
 
 const getTopGenre = (movies) => {
+  if (movies.length === 0) {
+    return ``;
+  }
+
   const genresStats = getGenresStats(movies);
   return Object.entries(genresStats).sort((a, b) => b[1] - a[1])[0][0];
 };
@@ -112,7 +140,8 @@ const renderChart = (ctx, movies) => {
   });
 };
 
-const crateStatsTemplate = (movies) => {
+const crateStatsTemplate = (localData) => {
+  const {movies, currentFilter} = localData;
   const movieCount = movies.length;
   const {hours, minutes} = getTotalDuration(movies);
   const topGenre = getTopGenre(movies);
@@ -127,19 +156,53 @@ const crateStatsTemplate = (movies) => {
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
       <p class="statistic__filters-description">Show stats:</p>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
+      <input
+        type="radio"
+        class="statistic__filters-input visually-hidden"
+        name="statistic-filter" id="statistic-all-time"
+        value="all-time"
+        ${StatFilter.ALL_TIME === currentFilter ? `checked` : ``}
+      >
       <label for="statistic-all-time" class="statistic__filters-label">All time</label>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
+      <input
+        type="radio"
+        class="statistic__filters-input visually-hidden"
+        name="statistic-filter"
+        id="statistic-today"
+        value="today"
+        ${StatFilter.TODAY === currentFilter ? `checked` : ``}
+      >
       <label for="statistic-today" class="statistic__filters-label">Today</label>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
+      <input
+        type="radio"
+        class="statistic__filters-input visually-hidden"
+        name="statistic-filter"
+        id="statistic-week"
+        value="week"
+        ${StatFilter.WEEK === currentFilter ? `checked` : ``}
+      >
       <label for="statistic-week" class="statistic__filters-label">Week</label>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
+      <input
+        type="radio"
+        class="statistic__filters-input visually-hidden"
+        name="statistic-filter"
+        id="statistic-month"
+        value="month"
+        ${StatFilter.MONTH === currentFilter ? `checked` : ``}
+      >
       <label for="statistic-month" class="statistic__filters-label">Month</label>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
+      <input
+        type="radio"
+        class="statistic__filters-input visually-hidden"
+        name="statistic-filter"
+        id="statistic-year"
+        value="year"
+        ${StatFilter.YEAR === currentFilter ? `checked` : ``}
+      >
       <label for="statistic-year" class="statistic__filters-label">Year</label>
     </form>
 
@@ -169,18 +232,43 @@ export default class Stats extends SmartView {
     super();
 
     this._movies = movies;
-    this._localData = movies;
     this._chart = null;
+    this._currentFilter = StatFilter.ALL_TIME;
+    this._localData = {movies: this._movies, currentFilter: this._currentFilter};
+
+    this._filterChangeHandler = this._filterChangeHandler.bind(this);
 
     this._setChart();
+    this._setInnerHandler();
   }
 
   getTemplate() {
     return crateStatsTemplate(this._localData);
   }
 
-  restoreHandlers() {
+  _filterChangeHandler(evt) {
+    evt.preventDefault();
+    const newFilter = evt.target.value;
 
+    if (this._currentFilter === newFilter) {
+      return;
+    }
+
+    this._currentFilter = newFilter;
+    const filteredMovies = filter[this._currentFilter](this._movies);
+
+    this.updateLocalData({movies: filteredMovies, currentFilter: this._currentFilter});
+  }
+
+  _setInnerHandler() {
+    this.getElement()
+      .querySelector(`.statistic__filters`)
+      .addEventListener(`change`, this._filterChangeHandler);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandler();
+    this._setChart();
   }
 
   _setChart() {
@@ -190,6 +278,6 @@ export default class Stats extends SmartView {
 
     const ctx = this.getElement().querySelector(`.statistic__chart`);
 
-    this._chart = renderChart(ctx, this._movies);
+    this._chart = renderChart(ctx, this._localData.movies);
   }
 }
