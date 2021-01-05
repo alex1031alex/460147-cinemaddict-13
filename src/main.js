@@ -7,7 +7,7 @@ import FilterPresenter from "./presenter/filter.js";
 import UserProfilePresenter from "./presenter/user-profile.js";
 import MoviesModel from "./model/movies.js";
 import FilterModel from "./model/filter.js";
-import {render, RenderPosition} from "./utils/render.js";
+import {render, RenderPosition, replace} from "./utils/render.js";
 import {MenuItem} from "./const.js";
 
 const MOVIE_COUNT = 23;
@@ -27,10 +27,7 @@ userProfilePresenter.init();
 
 const menuComponent = new MenuView();
 const counterComponent = new CounterView(movies.length);
-
-const watchedMovies = moviesModel.get().filter((movie) => movie.userInfo.isWatched);
-const statsComponent = new StatsView(watchedMovies);
-statsComponent.hide();
+let statsComponent = null;
 
 render(siteMain, menuComponent, RenderPosition.BEFOREEND);
 
@@ -40,14 +37,28 @@ const boardPresenter = new BoardPresenter(siteMain, moviesModel, filterModel);
 const filterPresenter = new FilterPresenter(siteNavigation, filterModel, moviesModel);
 
 const handleMenuClick = (menuItem) => {
-  if (menuItem === MenuItem.STATS) {
-    boardPresenter.hide();
-    statsComponent.show();
-    filterPresenter.resetActiveFilter();
-  } else {
+  if (menuItem !== MenuItem.STATS) {
     statsComponent.hide();
     boardPresenter.show();
+    return;
   }
+
+  let prevStatsComponent = statsComponent;
+  const watchedMovies = moviesModel.get().filter((movie) => movie.userInfo.isWatched);
+  statsComponent = new StatsView(watchedMovies);
+
+  if (prevStatsComponent === null) {
+    boardPresenter.hide();
+    render(siteMain, statsComponent, RenderPosition.BEFOREEND);
+    filterPresenter.resetActiveFilter();
+    return;
+  }
+
+  replace(statsComponent, prevStatsComponent);
+
+  boardPresenter.hide();
+  statsComponent.show();
+  filterPresenter.resetActiveFilter();
 };
 
 menuComponent.setClickHandler(handleMenuClick);
@@ -55,5 +66,4 @@ menuComponent.setClickHandler(handleMenuClick);
 filterPresenter.init();
 boardPresenter.init();
 
-render(siteMain, statsComponent, RenderPosition.BEFOREEND);
 render(siteFooter, counterComponent, RenderPosition.BEFOREEND);
