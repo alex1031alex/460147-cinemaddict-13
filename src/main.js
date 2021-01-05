@@ -45,7 +45,8 @@ const handleMenuClick = (menuItem) => {
 
   let prevStatsComponent = statsComponent;
   const watchedMovies = moviesModel.get().filter((movie) => movie.userInfo.isWatched);
-  statsComponent = new StatsView(watchedMovies);
+  const currentUserRank = userProfilePresenter.getCurrentUserRank();
+  statsComponent = new StatsView(watchedMovies, currentUserRank);
 
   if (prevStatsComponent === null) {
     boardPresenter.hide();

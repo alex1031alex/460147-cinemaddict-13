@@ -141,16 +141,17 @@ const renderChart = (ctx, movies) => {
 };
 
 const crateStatsTemplate = (localData) => {
-  const {movies, currentFilter} = localData;
+  const {movies, currentFilter, userRank} = localData;
   const movieCount = movies.length;
   const {hours, minutes} = getTotalDuration(movies);
   const topGenre = getTopGenre(movies);
+  const userRankTemplate = userRank || ``;
 
   return `<section class="statistic">
     <p class="statistic__rank">
       Your rank
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">Sci-Fighter</span>
+      <span class="statistic__rank-label">${userRankTemplate}</span>
     </p>
 
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -228,13 +229,18 @@ const crateStatsTemplate = (localData) => {
 };
 
 export default class Stats extends SmartView {
-  constructor(movies) {
+  constructor(movies, userRank) {
     super();
 
     this._movies = movies;
+    this._userRank = userRank;
     this._chart = null;
     this._currentFilter = StatFilter.ALL_TIME;
-    this._localData = {movies: this._movies, currentFilter: this._currentFilter};
+    this._localData = {
+      movies: this._movies,
+      currentFilter: this._currentFilter,
+      userRank: this._userRank
+    };
 
     this._filterChangeHandler = this._filterChangeHandler.bind(this);
 
