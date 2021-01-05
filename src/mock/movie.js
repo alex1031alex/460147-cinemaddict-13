@@ -165,10 +165,19 @@ const generateComments = (movieId) => {
   return comments;
 };
 
+const generateWatchingDate = () => {
+  const now = new Date();
+  const dateFrom = new Date(now.setMonth(now.getMonth() - 2)).getTime();
+  const dateTo = new Date().getTime();
+
+  return new Date(getRandomInteger(dateFrom, dateTo));
+};
+
 export const generateMovie = () => {
   const title = getRandomItem(titles);
   const releaseDate = generateReleaseDate();
   const id = nanoid();
+  const isWatched = Boolean(getRandomInteger(0, 1));
 
   return {
     id,
@@ -187,8 +196,9 @@ export const generateMovie = () => {
     country: getRandomItem(countries),
     userInfo: {
       isAtWatchlist: Boolean(getRandomInteger(0, 1)),
-      isWatched: Boolean(getRandomInteger(0, 1)),
+      isWatched,
       isFavorite: Boolean(getRandomInteger(0, 1)),
+      watchingDate: isWatched ? generateWatchingDate() : null,
     },
     comments: generateComments(id)
   };

@@ -152,6 +152,15 @@ export default class Movie {
 
     updatedMovie.userInfo = JSON.parse(JSON.stringify(updatedMovie.userInfo));
     updatedMovie.userInfo.isWatched = !updatedMovie.userInfo.isWatched;
+
+    if (updatedMovie.userInfo.isWatched && updatedMovie.userInfo.watchingDate === null) {
+      updatedMovie.userInfo.watchingDate = new Date();
+    }
+
+    if (updatedMovie.userInfo.watchingDate && !updatedMovie.userInfo.isWatched) {
+      updatedMovie.userInfo.watchingDate = null;
+    }
+
     this._changeData(UserAction.UPDATE_MOVIE, UpdateType.MINOR, updatedMovie);
   }
 
