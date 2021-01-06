@@ -81,14 +81,15 @@ export default class Movies extends Observer {
       },
       [`runtime`]: movie.runtime,
       [`title`]: movie.title,
-      [`total_rating`]: movie.rating
+      [`total_rating`]: movie.rating,
+      [`writers`]: movie.writers
     };
 
     const userDetails = {
       [`already_watched`]: movie.userInfo.isWatched,
       [`favorite`]: movie.userInfo.isFavorite,
       [`watching_date`]: movie.userInfo.isWatched ?
-        movie.userInfo.watchingDate.toISOString() : null,
+        movie.userInfo.watchingDate : null,
       [`watchlist`]: movie.userInfo.isAtWatchlist
     };
 
@@ -98,6 +99,7 @@ export default class Movies extends Observer {
       [`id`]: movie.id,
       [`comments`]: movie.comments
     };
+
 
     return adaptedMovie;
   }

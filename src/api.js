@@ -37,7 +37,7 @@ export default class Api {
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON)
-      .then((MoviesModel.adaptToClient));
+      .then(MoviesModel.adaptToClient);
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
