@@ -9,10 +9,18 @@ import MoviesModel from "./model/movies.js";
 import FilterModel from "./model/filter.js";
 import {render, RenderPosition, replace} from "./utils/render.js";
 import {MenuItem} from "./const.js";
+import Api from "./api.js";
 
 const MOVIE_COUNT = 23;
+const AUTHORIZATION = `Basic Ft76bvG9xxN82L3muu18`;
+const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
 
 const movies = new Array(MOVIE_COUNT).fill().map(generateMovie);
+const api = new Api(END_POINT, AUTHORIZATION);
+api.getMovies().then((movies) => {
+
+});
+
 const moviesModel = new MoviesModel();
 moviesModel.set(movies);
 
