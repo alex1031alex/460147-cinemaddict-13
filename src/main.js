@@ -7,7 +7,7 @@ import UserProfilePresenter from "./presenter/user-profile.js";
 import MoviesModel from "./model/movies.js";
 import FilterModel from "./model/filter.js";
 import {render, RenderPosition, replace} from "./utils/render.js";
-import {MenuItem} from "./const.js";
+import {MenuItem, UpdateType} from "./const.js";
 import Api from "./api.js";
 
 const AUTHORIZATION = `Basic Ft76bvG9xxN82L3muu18`;
@@ -66,8 +66,12 @@ menuComponent.setClickHandler(handleMenuClick);
 filterPresenter.init();
 boardPresenter.init();
 
-api.getMovies().then((movies) => {
-  moviesModel.set(movies);
-  counterComponent = new CounterView(moviesModel.get().length);
-  render(siteFooter, counterComponent, RenderPosition.BEFOREEND);
-});
+api.getMovies()
+    .then((movies) => {
+      moviesModel.set(UpdateType.INIT, movies);
+      counterComponent = new CounterView(moviesModel.get().length);
+      render(siteFooter, counterComponent, RenderPosition.BEFOREEND);
+    })
+    .catch(() => {
+      moviesModel.set(UpdateType.INIT, []);
+    });
