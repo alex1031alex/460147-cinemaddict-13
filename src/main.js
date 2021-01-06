@@ -32,7 +32,7 @@ const menuComponent = new MenuView();
 render(siteMain, menuComponent, RenderPosition.BEFOREEND);
 const siteNavigation = siteMain.querySelector(`.main-navigation`);
 
-const boardPresenter = new BoardPresenter(siteMain, moviesModel, filterModel);
+const boardPresenter = new BoardPresenter(siteMain, moviesModel, filterModel, api);
 const filterPresenter = new FilterPresenter(siteNavigation, filterModel, moviesModel);
 
 const handleMenuClick = (menuItem) => {

@@ -15,10 +15,11 @@ const MOVIE_COUNT_PER_STEP = 5;
 const EXTRA_MOVIE_COUNT = 2;
 
 export default class Board {
-  constructor(boardContainer, moviesModel, filterModel) {
+  constructor(boardContainer, moviesModel, filterModel, api) {
     this._boardContainer = boardContainer;
     this._moviesModel = moviesModel;
     this._filterModel = filterModel;
+    this._api = api;
     this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
     this._moviePresenter = {
       mainList: {},
@@ -232,7 +233,8 @@ export default class Board {
         container,
         this._handleViewAction,
         this._handleModeChange,
-        this._handlePopupClose
+        this._handlePopupClose,
+        this._api
     );
     moviePresenter.init(movie);
     presenterList[movie.id] = moviePresenter;

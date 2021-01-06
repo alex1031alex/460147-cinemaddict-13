@@ -1,7 +1,6 @@
 import {nanoid} from 'nanoid';
 import MovieView from "../view/movie.js";
 import PopupView from "../view/popup.js";
-import {getComments, addComment, deleteComment} from "../mock/comment.js";
 import CommentsModel from "../model/comments.js";
 import {render, append, remove, replace, RenderPosition} from "../utils/render.js";
 import {isKeyEscape} from "../utils/common.js";
@@ -17,11 +16,12 @@ const Mode = {
 const page = document.querySelector(`body`);
 
 export default class Movie {
-  constructor(container, changeData, changeMode, onPopupClose) {
+  constructor(container, changeData, changeMode, onPopupClose, api) {
     this._container = container;
     this._changeData = changeData;
     this._changeMode = changeMode;
     this._onPopupClose = onPopupClose;
+    this._api = api;
 
     this._movieComponent = null;
     this._popupComponent = null;
@@ -126,8 +126,10 @@ export default class Movie {
     document.addEventListener(`keydown`, this._handleFormSubmit);
     this._mode = Mode.POPUP;
 
-    this._commentsModel.set(getComments(this._movie.id));
-    this.init(this._movie);
+    this._api.getComments(this._movie.id)
+      .then((comments) => this._commentsModel.set(comments))
+      .then(() => this.init(this._movie))
+      .catch(() => this._commentsModel.set([]));
   }
 
   _handleCloseButtonClick() {
@@ -189,7 +191,6 @@ export default class Movie {
           localComment
       );
 
-      addComment(this._movie.id, localComment);
       this._popupComponent.moveScrollDown();
     }
   }
@@ -200,7 +201,6 @@ export default class Movie {
         commentId
     );
 
-    deleteComment(this._movie.id, commentId);
     this._popupComponent.moveScrollDown();
   }
 
