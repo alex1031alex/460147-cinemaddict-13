@@ -138,6 +138,11 @@ export default class Board {
         this._rerenderBoard(true, true);
         break;
       }
+      case UpdateType.INIT: {
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderBoard();
+      }
     }
   }
 

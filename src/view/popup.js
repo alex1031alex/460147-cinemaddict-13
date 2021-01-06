@@ -102,7 +102,7 @@ const createPopupTemplate = (movie, comments, localComment) => {
           <div class="film-details__poster">
             <img 
               class="film-details__poster-img"
-              src="./images/posters/${poster}"
+              src="./${poster}"
               alt="poster of movie: ${title}"
             >
 
