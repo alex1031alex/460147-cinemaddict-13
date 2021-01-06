@@ -105,7 +105,8 @@ export default class Board {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_MOVIE: {
-        this._moviesModel.update(updateType, update);
+        this._api.updateMovie(update)
+          .then((response) => this._moviesModel.update(updateType, response));
         break;
       }
       case UserAction.DELETE_COMMENT: {
