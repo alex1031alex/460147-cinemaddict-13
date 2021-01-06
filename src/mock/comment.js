@@ -43,11 +43,20 @@ const generateDate = () => {
   return new Date(currentDate);
 };
 
-export const generateComment = (movieId) => {
+export const addComment = (movieId, comment) => {
   if (!comments[movieId]) {
     comments[movieId] = [];
   }
 
+  comments[movieId].push(comment);
+};
+
+export const deleteComment = (movieId, commentId) => {
+  comments[movieId] = comments[movieId]
+    .filter((currentComment) => currentComment.id !== commentId);
+};
+
+export const generateComment = (movieId) => {
   const comment = {
     id: nanoid(),
     emotion: getRandomItem(emotions),
@@ -56,11 +65,11 @@ export const generateComment = (movieId) => {
     text: getRandomItem(texts)
   };
 
-  comments[movieId].push(comment);
+  addComment(movieId, comment);
 
   return comment.id;
 };
 
 export const getComments = (movieId) => {
-  return comments[movieId];
+  return comments[movieId] || [];
 };

@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import {FilterName} from "../const.js";
 dayjs.extend(duration);
 
 export const convertToHourFormat = (timeInMinutes) => {
@@ -19,4 +20,11 @@ export const sortByDate = (movieA, movieB) => {
 
 export const sortByRating = (movieA, movieB) => {
   return movieB.rating - movieA.rating;
+};
+
+export const filter = {
+  [FilterName.ALL_MOVIES]: (movies) => movies,
+  [FilterName.WATCHLIST]: (movies) => movies.filter((movie) => movie.userInfo.isAtWatchlist),
+  [FilterName.HISTORY]: (movies) => movies.filter((movie) => movie.userInfo.isWatched),
+  [FilterName.FAVORITES]: (movies) => movies.filter((movie) => movie.userInfo.isFavorite),
 };

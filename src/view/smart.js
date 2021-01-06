@@ -18,7 +18,7 @@ export default class Smart extends Abstract {
     this.restoreHandlers();
   }
 
-  updateLocalData(update) {
+  updateLocalData(update, justDataUpdating) {
     if (!update) {
       return;
     }
@@ -28,6 +28,10 @@ export default class Smart extends Abstract {
         this._localData,
         update
     );
+
+    if (justDataUpdating) {
+      return;
+    }
 
     this.updateElement();
   }
