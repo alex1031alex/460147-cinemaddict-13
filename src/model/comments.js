@@ -15,12 +15,10 @@ export default class Comments extends Observer {
   }
 
   add(userAction, update) {
-    this._comments = [
-      ...this._comments,
-      update
-    ];
+    const {movie, comments} = update;
+    this._comments = comments;
 
-    this._notify(userAction);
+    this._notify(userAction, movie);
   }
 
   delete(userAction, commentId) {
@@ -59,7 +57,7 @@ export default class Comments extends Observer {
         comment,
         {
           comment: comment.text,
-          data: comment.data.toISOString()
+          date: comment.date.toISOString()
         }
     );
 

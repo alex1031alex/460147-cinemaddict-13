@@ -1,4 +1,3 @@
-import {nanoid} from 'nanoid';
 import MovieView from "../view/movie.js";
 import PopupView from "../view/popup.js";
 import CommentsModel from "../model/comments.js";
@@ -183,13 +182,11 @@ export default class Movie {
       }
 
       localComment.date = new Date();
-      localComment.author = `Alex Alexandrov`;
-      localComment.id = nanoid();
 
-      this._commentsModel.add(
-          UserAction.ADD_COMMENT,
-          localComment
-      );
+      this._api.addComment(this._movie.id, localComment)
+        .then((response) => {
+          this._commentsModel.add(UserAction.ADD_COMMENT, response);
+        });
 
       this._popupComponent.moveScrollDown();
     }
@@ -204,19 +201,13 @@ export default class Movie {
     this._popupComponent.moveScrollDown();
   }
 
-  _handleModelEvent(userAction) {
+  _handleModelEvent(userAction, updatedMovie) {
     switch (userAction) {
       case UserAction.ADD_COMMENT: {
         this._changeData(
             UserAction.ADD_COMMENT,
             UpdateType.PATCH,
-            Object.assign(
-                {},
-                this._movie,
-                {
-                  comments: this._commentsModel.get().slice().map((comment) => comment.id)
-                }
-            )
+            updatedMovie
         );
         break;
       }
