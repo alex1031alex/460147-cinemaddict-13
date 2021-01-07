@@ -186,19 +186,17 @@ export default class Movie {
       this._api.addComment(this._movie.id, localComment)
         .then((response) => {
           this._commentsModel.add(UserAction.ADD_COMMENT, response);
+          this._popupComponent.moveScrollDown();
         });
-
-      this._popupComponent.moveScrollDown();
     }
   }
 
   _handleDeleteClick(commentId) {
-    this._commentsModel.delete(
-        UserAction.DELETE_COMMENT,
-        commentId
-    );
-
-    this._popupComponent.moveScrollDown();
+    this._api.deleteComment(commentId)
+      .then(() => {
+        this._commentsModel.delete(UserAction.DELETE_COMMENT, commentId);
+        this._popupComponent.moveScrollDown();
+      });
   }
 
   _handleModelEvent(userAction, updatedMovie) {
