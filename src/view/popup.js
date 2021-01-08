@@ -11,7 +11,7 @@ const formateCommentDate = (date) => {
   return dayjs.duration(-now.diff(date)).humanize(true);
 };
 
-const createCommentTemplate = (comment, isDisabled) => {
+const createCommentTemplate = (comment, isDisabled, isDeleting = false) => {
   const {id, emotion, author, date, text} = comment;
   const formattedDate = formateCommentDate(date);
 
@@ -29,18 +29,24 @@ const createCommentTemplate = (comment, isDisabled) => {
             class="film-details__comment-delete"
             data-id="${id}"
             ${isDisabled ? `disabled` : ``}
-          >Delete</button>
+          >${isDeleting ? `Deleting...` : `Delete`}</button>
         </p>
       </div>
     </li>`
   );
 };
 
-const createCommentListTemplate = (comments, isDisabled = false) => {
+const createCommentListTemplate = (comments, isDisabled = false, deletingCommentId = null) => {
   const commentListTemplate = comments
     .slice()
     .sort((a, b) => a.date.getTime() - b.date.getTime())
-    .map((comment) => createCommentTemplate(comment, isDisabled))
+    .map((comment) => {
+      if (!deletingCommentId || deletingCommentId !== comment.id) {
+        return createCommentTemplate(comment, isDisabled);
+      }
+
+      return createCommentTemplate(comment, true, true);
+    })
     .join(`\n`);
 
   return commentListTemplate;
@@ -82,9 +88,14 @@ const createPopupTemplate = (movie, comments, localData) => {
   const favoriteButtonChecked = isFavorite ? `checked` : ``;
   const commentCount = movie.comments.length;
 
-  const {localCommentEmotion: emotion, localCommentText: commentText, isDisabled} = localData;
+  const {
+    localCommentEmotion: emotion,
+    localCommentText: commentText,
+    isDisabled,
+    deletingCommentId
+  } = localData;
 
-  const commentListTemplate = createCommentListTemplate(comments, isDisabled);
+  const commentListTemplate = createCommentListTemplate(comments, isDisabled, deletingCommentId);
 
   const emotionTemplate = emotion
     ? `<img src="./images/emoji/${emotion}.png" width="55" height="55" alt="${emotion}">`
@@ -248,7 +259,8 @@ export default class Popup extends SmartView {
     this._localData = {
       localCommentText: ``,
       localCommentEmotion: ``,
-      isDisabled: false
+      isDisabled: false,
+      deletingCommentId: null
     };
 
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);

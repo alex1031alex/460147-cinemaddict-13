@@ -197,6 +197,7 @@ export default class Movie {
   }
 
   _handleDeleteClick(commentId) {
+    this._popupComponent.updateLocalData({isDisabled: true, deletingCommentId: commentId});
     this._api.deleteComment(commentId)
       .then(() => {
         this._commentsModel.delete(UserAction.DELETE_COMMENT, commentId);
