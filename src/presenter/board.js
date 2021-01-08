@@ -265,7 +265,7 @@ export default class Board {
       .slice(0, Math.min(this._renderedMoviesCount, movies.length))
       .forEach((movie) => this._renderMovie(movieContainer, movie, this._moviePresenter.mainList));
 
-    if (movies.length > MOVIE_COUNT_PER_STEP) {
+    if (movies.length > this._renderedMoviesCount) {
       this._renderShowMoreButton(movieContainer);
     }
   }
