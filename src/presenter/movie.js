@@ -187,6 +187,7 @@ export default class Movie {
 
       localComment.date = new Date();
 
+      this._popupComponent.updateLocalData({isDisabled: true});
       this._api.addComment(this._movie.id, localComment)
         .then((response) => {
           this._commentsModel.add(UserAction.ADD_COMMENT, response);
