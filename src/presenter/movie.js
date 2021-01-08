@@ -182,6 +182,7 @@ export default class Movie {
       };
 
       if (localComment.emotion === `` || localComment.text === ``) {
+        this.setAborting();
         return;
       }
 
@@ -192,6 +193,9 @@ export default class Movie {
         .then((response) => {
           this._commentsModel.add(UserAction.ADD_COMMENT, response);
           this._popupComponent.moveScrollDown();
+        })
+        .catch(() => {
+          this.setAborting();
         });
     }
   }
@@ -202,7 +206,19 @@ export default class Movie {
       .then(() => {
         this._commentsModel.delete(UserAction.DELETE_COMMENT, commentId);
         this._popupComponent.moveScrollDown();
+      })
+      .catch(() => {
+        this.setAborting();
       });
+  }
+
+  setAborting() {
+    const resetPopupState = () => {
+      this._popupComponent.updateLocalData({isDisabled: false, deletingCommentId: null});
+      this._popupComponent.moveScrollDown();
+    };
+
+    this._popupComponent.shake(resetPopupState);
   }
 
   _handleModelEvent(userAction, updatedMovie) {
