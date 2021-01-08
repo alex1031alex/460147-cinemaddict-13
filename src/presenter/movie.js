@@ -175,7 +175,11 @@ export default class Movie {
 
   _handleFormSubmit(evt) {
     if (evt.ctrlKey && evt.key === ENTER_KEY) {
-      const localComment = this._popupComponent.getLocalData();
+      const localData = this._popupComponent.getLocalData();
+      const localComment = {
+        emotion: localData.localCommentEmotion,
+        text: localData.localCommentText
+      };
 
       if (localComment.emotion === `` || localComment.text === ``) {
         return;
