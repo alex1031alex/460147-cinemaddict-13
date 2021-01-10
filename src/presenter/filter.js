@@ -19,8 +19,12 @@ export default class Filter {
     this._moviesModel.addObserver(this._handleModelEvent);
   }
 
-  init() {
-    this._currentFilter = this._filterModel.get();
+  init(isFilterReset = false) {
+    if (isFilterReset) {
+      this._currentFilter = null;
+    } else {
+      this._currentFilter = this._filterModel.get();
+    }
 
     const filters = this._getFilters();
     const prevFilterComponent = this._filterComponent;
@@ -57,5 +61,9 @@ export default class Filter {
       .map((filterName) => {
         return {name: filterName, count: filter[filterName](movies).length};
       });
+  }
+
+  resetActiveFilter() {
+    this.init(true);
   }
 }

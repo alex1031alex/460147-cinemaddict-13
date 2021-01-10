@@ -66,4 +66,8 @@ export default class UserProfile {
 
     return null;
   }
+
+  getCurrentUserRank() {
+    return this._currentUserRank;
+  }
 }

@@ -1,4 +1,5 @@
 import Abstract from "./abstract.js";
+import {HIDE_ELEMENT_CLASS} from "../const.js";
 
 export default class Smart extends Abstract {
   constructor() {
@@ -38,5 +39,13 @@ export default class Smart extends Abstract {
 
   restoreHandlers() {
     throw new Error(`Abstract method not implemented: restoreHandlers`);
+  }
+
+  hide() {
+    this.getElement().classList.add(HIDE_ELEMENT_CLASS);
+  }
+
+  show() {
+    this.getElement().classList.remove(HIDE_ELEMENT_CLASS);
   }
 }
