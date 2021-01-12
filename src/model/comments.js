@@ -37,4 +37,34 @@ export default class Comments extends Observer {
 
     this._notify(userAction);
   }
+
+  static adaptToClient(comment) {
+    const adaptedComment = Object.assign(
+        {},
+        comment,
+        {
+          text: comment.comment,
+          date: new Date(comment.date)
+        }
+    );
+
+    delete adaptedComment.comment;
+
+    return adaptedComment;
+  }
+
+  static adaptToServer(comment) {
+    const adaptedComment = Object.assign(
+        {},
+        comment,
+        {
+          comment: comment.text,
+          data: comment.data.toISOString()
+        }
+    );
+
+    delete adaptedComment.text;
+
+    return adaptedComment;
+  }
 }

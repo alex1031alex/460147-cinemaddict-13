@@ -5,6 +5,7 @@ import MainListView from "../view/main-list.js";
 import TopRatedListView from "../view/top-rated-list.js";
 import MostCommentedListView from "../view/most-commented-list.js";
 import ShowMoreButtonView from "../view/show-more-button.js";
+import LoadingView from "../view/loading.js";
 import MoviePresenter from "./movie.js";
 import {render, remove, RenderPosition, replace} from "../utils/render.js";
 import {sortByDate, sortByRating, filter} from "../utils/movie.js";
@@ -14,10 +15,11 @@ const MOVIE_COUNT_PER_STEP = 5;
 const EXTRA_MOVIE_COUNT = 2;
 
 export default class Board {
-  constructor(boardContainer, moviesModel, filterModel) {
+  constructor(boardContainer, moviesModel, filterModel, api) {
     this._boardContainer = boardContainer;
     this._moviesModel = moviesModel;
     this._filterModel = filterModel;
+    this._api = api;
     this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
     this._moviePresenter = {
       mainList: {},
@@ -28,11 +30,13 @@ export default class Board {
         presenter: null
       }
     };
+    this._isLoading = true;
     this._currentSortType = SortType.DEFAULT;
 
     this._boardComponent = new BoardView();
     this._board = this._boardComponent.getElement();
 
+    this._loadingComponent = new LoadingView();
     this._noMoviesComponent = new NoMoviesView();
     this._sortComponent = null;
     this._mainListComponent = new MainListView();
@@ -72,6 +76,10 @@ export default class Board {
     return filteredMovies;
   }
 
+  _renderLoading() {
+    render(this._board, this._loadingComponent, RenderPosition.AFTERBEGIN);
+  }
+
   _renderNoMovies() {
     render(this._board, this._noMoviesComponent, RenderPosition.AFTERBEGIN);
   }
@@ -97,7 +105,8 @@ export default class Board {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_MOVIE: {
-        this._moviesModel.update(updateType, update);
+        this._api.updateMovie(update)
+          .then((response) => this._moviesModel.update(updateType, response));
         break;
       }
       case UserAction.DELETE_COMMENT: {
@@ -112,7 +121,7 @@ export default class Board {
   }
 
   _handleModelEvent(updateType, update) {
-    if (this._moviePresenter.popup.id === update.id) {
+    if (update && this._moviePresenter.popup.id === update.id) {
       this._moviePresenter.popup.presenter.init(update);
     }
 
@@ -130,6 +139,11 @@ export default class Board {
       case UpdateType.MAJOR: {
         this._rerenderBoard(true, true);
         break;
+      }
+      case UpdateType.INIT: {
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderBoard();
       }
     }
   }
@@ -220,7 +234,8 @@ export default class Board {
         container,
         this._handleViewAction,
         this._handleModeChange,
-        this._handlePopupClose
+        this._handlePopupClose,
+        this._api
     );
     moviePresenter.init(movie);
     presenterList[movie.id] = moviePresenter;
@@ -326,6 +341,11 @@ export default class Board {
   }
 
   _renderBoard() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     if (this._getMovies().length === 0) {
       this._renderNoMovies();
       return;

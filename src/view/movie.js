@@ -48,7 +48,7 @@ const createMovieTemplate = (movie) => {
       <span class="film-card__genre">${genre}</span>
     </p>
     <img 
-      src="./images/posters/${poster}"
+      src="./${poster}"
       alt="poster of movie: ${title}"
       class="film-card__poster"
     >

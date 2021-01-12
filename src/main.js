@@ -1,39 +1,38 @@
 import MenuView from "./view/menu.js";
 import CounterView from "./view/counter.js";
 import StatsView from "./view/stats.js";
-import {generateMovie} from "./mock/movie.js";
 import BoardPresenter from "./presenter/board.js";
 import FilterPresenter from "./presenter/filter.js";
 import UserProfilePresenter from "./presenter/user-profile.js";
 import MoviesModel from "./model/movies.js";
 import FilterModel from "./model/filter.js";
 import {render, RenderPosition, replace} from "./utils/render.js";
-import {MenuItem} from "./const.js";
+import {MenuItem, UpdateType} from "./const.js";
+import Api from "./api.js";
 
-const MOVIE_COUNT = 23;
-
-const movies = new Array(MOVIE_COUNT).fill().map(generateMovie);
-const moviesModel = new MoviesModel();
-moviesModel.set(movies);
-
-const filterModel = new FilterModel();
+const AUTHORIZATION = `Basic Ft76bvG9xxN82L3muu18`;
+const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
 
 const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 const siteFooter = document.querySelector(`.footer`);
 
+const api = new Api(END_POINT, AUTHORIZATION);
+
+const moviesModel = new MoviesModel();
+const filterModel = new FilterModel();
+
 const userProfilePresenter = new UserProfilePresenter(siteHeader, moviesModel);
 userProfilePresenter.init();
 
-const menuComponent = new MenuView();
-const counterComponent = new CounterView(movies.length);
 let statsComponent = null;
+let counterComponent = null;
 
+const menuComponent = new MenuView();
 render(siteMain, menuComponent, RenderPosition.BEFOREEND);
-
 const siteNavigation = siteMain.querySelector(`.main-navigation`);
 
-const boardPresenter = new BoardPresenter(siteMain, moviesModel, filterModel);
+const boardPresenter = new BoardPresenter(siteMain, moviesModel, filterModel, api);
 const filterPresenter = new FilterPresenter(siteNavigation, filterModel, moviesModel);
 
 const handleMenuClick = (menuItem) => {
@@ -67,4 +66,12 @@ menuComponent.setClickHandler(handleMenuClick);
 filterPresenter.init();
 boardPresenter.init();
 
-render(siteFooter, counterComponent, RenderPosition.BEFOREEND);
+api.getMovies()
+    .then((movies) => {
+      moviesModel.set(UpdateType.INIT, movies);
+      counterComponent = new CounterView(moviesModel.get().length);
+      render(siteFooter, counterComponent, RenderPosition.BEFOREEND);
+    })
+    .catch(() => {
+      moviesModel.set(UpdateType.INIT, []);
+    });
