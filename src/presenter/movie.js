@@ -1,4 +1,3 @@
-import {nanoid} from 'nanoid';
 import MovieView from "../view/movie.js";
 import PopupView from "../view/popup.js";
 import CommentsModel from "../model/comments.js";
@@ -176,47 +175,59 @@ export default class Movie {
 
   _handleFormSubmit(evt) {
     if (evt.ctrlKey && evt.key === ENTER_KEY) {
-      const localComment = this._popupComponent.getLocalData();
+      const localData = this._popupComponent.getLocalData();
+      const localComment = {
+        emotion: localData.localCommentEmotion,
+        text: localData.localCommentText
+      };
 
       if (localComment.emotion === `` || localComment.text === ``) {
+        this.setAborting();
         return;
       }
 
       localComment.date = new Date();
-      localComment.author = `Alex Alexandrov`;
-      localComment.id = nanoid();
 
-      this._commentsModel.add(
-          UserAction.ADD_COMMENT,
-          localComment
-      );
-
-      this._popupComponent.moveScrollDown();
+      this._popupComponent.updateLocalData({isDisabled: true});
+      this._api.addComment(this._movie.id, localComment)
+        .then((response) => {
+          this._commentsModel.add(UserAction.ADD_COMMENT, response);
+          this._popupComponent.moveScrollDown();
+        })
+        .catch(() => {
+          this.setAborting();
+        });
     }
   }
 
   _handleDeleteClick(commentId) {
-    this._commentsModel.delete(
-        UserAction.DELETE_COMMENT,
-        commentId
-    );
-
-    this._popupComponent.moveScrollDown();
+    this._popupComponent.updateLocalData({isDisabled: true, deletingCommentId: commentId});
+    this._api.deleteComment(commentId)
+      .then(() => {
+        this._commentsModel.delete(UserAction.DELETE_COMMENT, commentId);
+        this._popupComponent.moveScrollDown();
+      })
+      .catch(() => {
+        this.setAborting();
+      });
   }
 
-  _handleModelEvent(userAction) {
+  setAborting() {
+    const resetPopupState = () => {
+      this._popupComponent.updateLocalData({isDisabled: false, deletingCommentId: null});
+      this._popupComponent.moveScrollDown();
+    };
+
+    this._popupComponent.shake(resetPopupState);
+  }
+
+  _handleModelEvent(userAction, updatedMovie) {
     switch (userAction) {
       case UserAction.ADD_COMMENT: {
         this._changeData(
             UserAction.ADD_COMMENT,
             UpdateType.PATCH,
-            Object.assign(
-                {},
-                this._movie,
-                {
-                  comments: this._commentsModel.get().slice().map((comment) => comment.id)
-                }
-            )
+            updatedMovie
         );
         break;
       }

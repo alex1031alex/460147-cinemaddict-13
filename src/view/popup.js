@@ -5,19 +5,13 @@ import SmartView from "./smart.js";
 import {convertToHourFormat} from "../utils/movie.js";
 dayjs.extend(relativeTime);
 
-const BLANK_COMMENT = {
-  text: ``,
-  date: ``,
-  emotion: ``
-};
-
 const formateCommentDate = (date) => {
   const now = dayjs();
 
   return dayjs.duration(-now.diff(date)).humanize(true);
 };
 
-const createCommentTemplate = (comment) => {
+const createCommentTemplate = (comment, isDisabled, isDeleting = false) => {
   const {id, emotion, author, date, text} = comment;
   const formattedDate = formateCommentDate(date);
 
@@ -31,24 +25,34 @@ const createCommentTemplate = (comment) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${formattedDate}</span>
-          <button class="film-details__comment-delete" data-id="${id}">Delete</button>
+          <button 
+            class="film-details__comment-delete"
+            data-id="${id}"
+            ${isDisabled ? `disabled` : ``}
+          >${isDeleting ? `Deleting...` : `Delete`}</button>
         </p>
       </div>
     </li>`
   );
 };
 
-const createCommentListTemplate = (comments) => {
+const createCommentListTemplate = (comments, isDisabled = false, deletingCommentId = null) => {
   const commentListTemplate = comments
     .slice()
     .sort((a, b) => a.date.getTime() - b.date.getTime())
-    .map(createCommentTemplate)
+    .map((comment) => {
+      if (!deletingCommentId || deletingCommentId !== comment.id) {
+        return createCommentTemplate(comment, isDisabled);
+      }
+
+      return createCommentTemplate(comment, true, true);
+    })
     .join(`\n`);
 
   return commentListTemplate;
 };
 
-const createPopupTemplate = (movie, comments, localComment) => {
+const createPopupTemplate = (movie, comments, localData) => {
   const {
     poster,
     age,
@@ -82,15 +86,21 @@ const createPopupTemplate = (movie, comments, localComment) => {
   const watchlistButtonChecked = isAtWatchlist ? `checked` : ``;
   const watchedButtonChecked = isWatched ? `checked` : ``;
   const favoriteButtonChecked = isFavorite ? `checked` : ``;
-
-  const commentListTemplate = createCommentListTemplate(comments);
   const commentCount = movie.comments.length;
 
-  const emotion = localComment.emotion;
-  const commentText = localComment.text;
+  const {
+    localCommentEmotion: emotion,
+    localCommentText: commentText,
+    isDisabled,
+    deletingCommentId
+  } = localData;
+
+  const commentListTemplate = createCommentListTemplate(comments, isDisabled, deletingCommentId);
+
   const emotionTemplate = emotion
     ? `<img src="./images/emoji/${emotion}.png" width="55" height="55" alt="${emotion}">`
     : ``;
+  const disablingTemplate = isDisabled ? `disabled` : ``;
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -165,6 +175,7 @@ const createPopupTemplate = (movie, comments, localComment) => {
             id="watchlist"
             name="watchlist"
             ${watchlistButtonChecked}
+            ${disablingTemplate}
           >
           <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
@@ -174,6 +185,7 @@ const createPopupTemplate = (movie, comments, localComment) => {
             id="watched"
             name="watched"
             ${watchedButtonChecked}
+            ${disablingTemplate}
           >
           <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
@@ -183,6 +195,7 @@ const createPopupTemplate = (movie, comments, localComment) => {
             id="favorite"
             name="favorite"
             ${favoriteButtonChecked}
+            ${disablingTemplate}
           >
           <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
         </section>
@@ -202,7 +215,12 @@ const createPopupTemplate = (movie, comments, localComment) => {
             </div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(commentText)}</textarea>
+              <textarea 
+                class="film-details__comment-input"
+                placeholder="Select reaction below and write comment here"
+                name="comment"
+                ${disablingTemplate}
+              >${he.encode(commentText)}</textarea>
             </label>
 
             <div class="film-details__emoji-list">
@@ -238,7 +256,12 @@ export default class Popup extends SmartView {
     super();
     this._movie = movie;
     this._comments = comments;
-    this._localData = BLANK_COMMENT;
+    this._localData = {
+      localCommentText: ``,
+      localCommentEmotion: ``,
+      isDisabled: false,
+      deletingCommentId: null
+    };
 
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
@@ -324,7 +347,7 @@ export default class Popup extends SmartView {
   _emojiClickHandler(evt) {
     evt.preventDefault();
 
-    if (evt.target.tagName !== `IMG`) {
+    if (evt.target.tagName !== `IMG` || this._localData.isDisabled) {
       return;
     }
 
@@ -333,7 +356,7 @@ export default class Popup extends SmartView {
       .substring(`emogi-`.length);
 
     this.updateLocalData({
-      emotion
+      localCommentEmotion: emotion
     });
 
     this.moveScrollDown();
@@ -342,7 +365,7 @@ export default class Popup extends SmartView {
   _commentInputHandler(evt) {
     evt.preventDefault();
 
-    this.updateLocalData({text: evt.target.value}, true);
+    this.updateLocalData({localCommentText: evt.target.value}, true);
   }
 
   _setInnerHandlers() {
@@ -366,6 +389,7 @@ export default class Popup extends SmartView {
     this._setInnerHandlers();
 
     this.setCloseButtonClickHandler(this._callback.closeButtonClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
     this.setWatchlistClickHandler(this._callback.watchlistClick);
     this.setWatchedClickHandler(this._callback.watchedClick);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
