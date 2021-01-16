@@ -75,3 +75,7 @@ api.getMovies()
     .catch(() => {
       moviesModel.set(UpdateType.INIT, []);
     });
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`);
+});
