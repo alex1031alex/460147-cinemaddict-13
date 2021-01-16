@@ -8,7 +8,7 @@ import MoviesModel from "./model/movies.js";
 import FilterModel from "./model/filter.js";
 import {render, RenderPosition, replace} from "./utils/render.js";
 import {MenuItem, UpdateType} from "./const.js";
-import Api from "./api.js";
+import Api from "./api/api.js";
 
 const AUTHORIZATION = `Basic Ft76bvG9xxN82L3muu18`;
 const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
