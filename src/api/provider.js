@@ -1,4 +1,5 @@
 import MoviesModel from "../model/movies.js";
+import {toast} from "../utils/toast.js";
 
 const createStoreStructure = (items) => {
   return items.reduce((acc, current) => {
@@ -12,10 +13,16 @@ export default class Provider {
   constructor(api, store) {
     this._api = api;
     this._store = store;
+
+    this._isSyncronizationNeeded = false;
   }
 
   _isOnline() {
     return window.navigator.onLine;
+  }
+
+  get isSyncronizationNeeded() {
+    return this._isSyncronizationNeeded;
   }
 
   getMovies() {
@@ -51,6 +58,7 @@ export default class Provider {
     }
 
     this._store.setItem(String(movie.id), MoviesModel.adaptToServer(Object.assign({}, movie)));
+    this._isSyncronizationNeeded = true;
 
     return Promise.resolve(movie);
   }
@@ -64,6 +72,8 @@ export default class Provider {
         });
     }
 
+    toast(`You can't add comments offline. Please, try again later.`);
+
     return Promise.reject(new Error(`Add new comment failed`));
   }
 
@@ -72,10 +82,14 @@ export default class Provider {
       return this._api.deleteComment(commentId);
     }
 
+    toast(`You can't delete comments offline. Please, try again later.`);
+
     return Promise.reject(new Error(`Delete comment failed`));
   }
 
   sync() {
+
+
     if (this._isOnline()) {
       const storeMovies = Object.values(this._store.getItems());
 
@@ -83,6 +97,7 @@ export default class Provider {
         .then((response) => {
           const items = createStoreStructure(response.updated);
           this._store.setItems(items);
+          this._isSyncronizationNeeded = false;
         });
     }
 

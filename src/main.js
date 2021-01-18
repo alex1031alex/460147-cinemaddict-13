@@ -6,7 +6,6 @@ import FilterPresenter from "./presenter/filter.js";
 import UserProfilePresenter from "./presenter/user-profile.js";
 import MoviesModel from "./model/movies.js";
 import FilterModel from "./model/filter.js";
-import {isOnline} from "./utils/common.js";
 import {render, RenderPosition, replace} from "./utils/render.js";
 import {MenuItem, UpdateType} from "./const.js";
 import Api from "./api/api.js";
@@ -15,13 +14,16 @@ import Provider from "./api/provider.js";
 
 const AUTHORIZATION = `Basic Ft76bvG9xxN82L3muu18`;
 const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
-const STORE_PREFIX = `cinemaaddict-cache`;
+const STORE_PREFIX = `cinemaddict-cache`;
 const STORE_VER = `v13`;
 const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+const PAGE_TITLE_ONLINE = `Cinemaddict`;
+const PAGE_TITLE_OFFLINE = `Cinemaddict [offline]`;
 
 const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 const siteFooter = document.querySelector(`.footer`);
+const titleElement = document.querySelector(`.header__logo`);
 
 const api = new Api(END_POINT, AUTHORIZATION);
 const store = new Store(STORE_NAME, window.localStorage);
@@ -89,5 +91,13 @@ window.addEventListener(`load`, () => {
 });
 
 window.addEventListener(`online`, () => {
-  apiWithProvider.sync();
+  titleElement.textContent = PAGE_TITLE_ONLINE;
+
+  if (apiWithProvider.isSyncronizationNeeded) {
+    apiWithProvider.sync();
+  }
+});
+
+window.addEventListener(`offline`, () => {
+  titleElement.textContent = PAGE_TITLE_OFFLINE;
 });
