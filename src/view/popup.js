@@ -274,13 +274,16 @@ export default class Popup extends SmartView {
     this._setInnerHandlers();
   }
 
+  getLocalData() {
+    return this._localData;
+  }
+
   getTemplate() {
     return createPopupTemplate(this._movie, this._comments, this._localData);
   }
 
-  _closeButtonClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.closeButtonClick();
+  moveScrollDown() {
+    this.getElement().scrollTop = this.getElement().scrollHeight;
   }
 
   setCloseButtonClickHandler(callback) {
@@ -291,22 +294,12 @@ export default class Popup extends SmartView {
       .addEventListener(`click`, this._closeButtonClickHandler);
   }
 
-  _watchlistClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.watchlistClick();
-  }
-
   setWatchlistClickHandler(callback) {
     this._callback.watchlistClick = callback;
     this
       .getElement()
       .querySelector(`#watchlist`)
       .addEventListener(`click`, this._watchlistClickHandler);
-  }
-
-  _watchedClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.watchedClick();
   }
 
   setWatchedClickHandler(callback) {
@@ -317,22 +310,12 @@ export default class Popup extends SmartView {
     .addEventListener(`click`, this._watchedClickHandler);
   }
 
-  _favoriteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.favoriteClick();
-  }
-
   setFavoriteClickHandler(callback) {
     this._callback.favoriteClick = callback;
     this
     .getElement()
     .querySelector(`#favorite`)
     .addEventListener(`click`, this._favoriteClickHandler);
-  }
-
-  _deleteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.deleteClick(evt.target.dataset.id);
   }
 
   setDeleteClickHandler(callback) {
@@ -342,6 +325,41 @@ export default class Popup extends SmartView {
     deleteButtons.forEach((button) => {
       button.addEventListener(`click`, this._deleteClickHandler);
     });
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+
+    this.setCloseButtonClickHandler(this._callback.closeButtonClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
+    this.setWatchlistClickHandler(this._callback.watchlistClick);
+    this.setWatchedClickHandler(this._callback.watchedClick);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
+  }
+
+  _closeButtonClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeButtonClick();
+  }
+
+  _watchlistClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.watchlistClick();
+  }
+
+  _watchedClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.watchedClick();
+  }
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+  }
+
+  _deleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(evt.target.dataset.id);
   }
 
   _emojiClickHandler(evt) {
@@ -375,23 +393,5 @@ export default class Popup extends SmartView {
     this.getElement()
       .querySelector(`.film-details__comment-input`)
       .addEventListener(`input`, this._commentInputHandler);
-  }
-
-  getLocalData() {
-    return this._localData;
-  }
-
-  moveScrollDown() {
-    this.getElement().scrollTop = this.getElement().scrollHeight;
-  }
-
-  restoreHandlers() {
-    this._setInnerHandlers();
-
-    this.setCloseButtonClickHandler(this._callback.closeButtonClick);
-    this.setDeleteClickHandler(this._callback.deleteClick);
-    this.setWatchlistClickHandler(this._callback.watchlistClick);
-    this.setWatchedClickHandler(this._callback.watchedClick);
-    this.setFavoriteClickHandler(this._callback.favoriteClick);
   }
 }

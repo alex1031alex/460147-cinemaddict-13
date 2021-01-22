@@ -59,6 +59,20 @@ export default class Board {
     this._render();
   }
 
+  show() {
+    this._board.classList.remove(HIDE_ELEMENT_CLASS);
+    this._sortComponent.getElement().classList.remove(HIDE_ELEMENT_CLASS);
+  }
+
+  hide() {
+    this._board.classList.add(HIDE_ELEMENT_CLASS);
+    this._sortComponent.getElement().classList.add(HIDE_ELEMENT_CLASS);
+
+    if (this._moviePresenter.popup.presenter) {
+      this._moviePresenter.popup.presenter.resetView();
+    }
+  }
+
   _getMovies() {
     const filterType = this._filterModel.get();
     const movies = this._moviesModel.get().slice();
@@ -74,14 +88,6 @@ export default class Board {
     }
 
     return filteredMovies;
-  }
-
-  _renderLoading() {
-    render(this._board, this._loadingComponent, RenderPosition.AFTERBEGIN);
-  }
-
-  _renderNoMovies() {
-    render(this._board, this._noMoviesComponent, RenderPosition.AFTERBEGIN);
   }
 
   _updateMovie(updatedMovie) {
@@ -102,131 +108,12 @@ export default class Board {
     }
   }
 
-  _handleViewAction(actionType, updateType, update) {
-    switch (actionType) {
-      case UserAction.UPDATE_MOVIE: {
-        this._api.updateMovie(update)
-          .then((response) => this._moviesModel.update(updateType, response));
-        break;
-      }
-      case UserAction.DELETE_COMMENT: {
-        this._moviesModel.update(updateType, update);
-        break;
-      }
-      case UserAction.ADD_COMMENT: {
-        this._moviesModel.update(updateType, update);
-        break;
-      }
-    }
+  _renderLoading() {
+    render(this._board, this._loadingComponent, RenderPosition.AFTERBEGIN);
   }
 
-  _handleModelEvent(updateType, update) {
-    if (update && this._moviePresenter.popup.id === update.id) {
-      this._moviePresenter.popup.presenter.init(update);
-    }
-
-    switch (updateType) {
-      case UpdateType.PATCH: {
-        this._updateMovie(update);
-        this._clearMostCommentedList();
-        this._renderMostCommentedMovies();
-        break;
-      }
-      case UpdateType.MINOR: {
-        this._rerender();
-        break;
-      }
-      case UpdateType.MAJOR: {
-        this._rerender(true, true);
-        break;
-      }
-      case UpdateType.INIT: {
-        this._isLoading = false;
-        remove(this._loadingComponent);
-        this._render();
-      }
-    }
-  }
-
-  _handleModeChange(movieId) {
-    this._moviePresenter.popup.id = movieId;
-    this._moviePresenter.popup.presenter = this._moviePresenter.mainList[movieId] ||
-      this._moviePresenter.topRatedList[movieId] || this._moviePresenter.mostCommentedList[movieId];
-
-    Object
-      .values(this._moviePresenter.mainList)
-      .forEach((presenter) => presenter.resetView());
-
-    Object
-      .values(this._moviePresenter.topRatedList)
-      .forEach((presenter) => presenter.resetView());
-
-    Object
-      .values(this._moviePresenter.mostCommentedList)
-      .forEach((presenter) => presenter.resetView());
-  }
-
-  _handlePopupClose() {
-    this._moviePresenter.popup.presenter = null;
-    this._moviePresenter.popup.id = null;
-  }
-
-  _clearMainList() {
-    Object
-      .values(this._moviePresenter.mainList)
-      .forEach((presenter) => presenter.destroy());
-    this._moviePresenter.mainList = {};
-  }
-
-  _clearTopRatedList() {
-    Object
-      .values(this._moviePresenter.topRatedList)
-      .forEach((presenter) => presenter.destroy());
-    this._moviePresenter.topRatedList = {};
-  }
-
-  _clearMostCommentedList() {
-    Object
-      .values(this._moviePresenter.mostCommentedList)
-      .forEach((presenter) => presenter.destroy());
-    this._moviePresenter.mostCommentedList = {};
-  }
-
-  _clear() {
-    this._clearMainList();
-    remove(this._showMoreButtonComponent);
-
-    this._clearTopRatedList();
-    this._clearMostCommentedList();
-  }
-
-  _rerender(resetRenderedMovieCount = false, resetSortType = false) {
-    this._clear();
-
-    if (resetRenderedMovieCount) {
-      this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
-    } else {
-      this._renderedMoviesCount = Math.min(this._getMovies().length, this._renderedMoviesCount);
-    }
-
-    if (resetSortType) {
-      this._currentSortType = SortType.DEFAULT;
-    }
-
-    this._render();
-  }
-
-  _handleSortTypeChange(sortType) {
-    if (sortType === this._currentSortType) {
-      return;
-    }
-
-    this._currentSortType = sortType;
-    this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
-
-    this._renderSort();
-    this._clearMainList();
-    this._renderMainListMovies();
+  _renderNoMovies() {
+    render(this._board, this._noMoviesComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderMovie(container, movie, presenterList) {
@@ -358,17 +245,130 @@ export default class Board {
     this._renderMostCommentedMovies();
   }
 
-  show() {
-    this._board.classList.remove(HIDE_ELEMENT_CLASS);
-    this._sortComponent.getElement().classList.remove(HIDE_ELEMENT_CLASS);
+  _rerender(resetRenderedMovieCount = false, resetSortType = false) {
+    this._clear();
+
+    if (resetRenderedMovieCount) {
+      this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
+    } else {
+      this._renderedMoviesCount = Math.min(this._getMovies().length, this._renderedMoviesCount);
+    }
+
+    if (resetSortType) {
+      this._currentSortType = SortType.DEFAULT;
+    }
+
+    this._render();
   }
 
-  hide() {
-    this._board.classList.add(HIDE_ELEMENT_CLASS);
-    this._sortComponent.getElement().classList.add(HIDE_ELEMENT_CLASS);
+  _clearMainList() {
+    Object
+      .values(this._moviePresenter.mainList)
+      .forEach((presenter) => presenter.destroy());
+    this._moviePresenter.mainList = {};
+  }
 
-    if (this._moviePresenter.popup.presenter) {
-      this._moviePresenter.popup.presenter.resetView();
+  _clearTopRatedList() {
+    Object
+      .values(this._moviePresenter.topRatedList)
+      .forEach((presenter) => presenter.destroy());
+    this._moviePresenter.topRatedList = {};
+  }
+
+  _clearMostCommentedList() {
+    Object
+      .values(this._moviePresenter.mostCommentedList)
+      .forEach((presenter) => presenter.destroy());
+    this._moviePresenter.mostCommentedList = {};
+  }
+
+  _clear() {
+    this._clearMainList();
+    remove(this._showMoreButtonComponent);
+
+    this._clearTopRatedList();
+    this._clearMostCommentedList();
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (sortType === this._currentSortType) {
+      return;
+    }
+
+    this._currentSortType = sortType;
+    this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
+
+    this._renderSort();
+    this._clearMainList();
+    this._renderMainListMovies();
+  }
+
+  _handlePopupClose() {
+    this._moviePresenter.popup.presenter = null;
+    this._moviePresenter.popup.id = null;
+  }
+
+  _handleModeChange(movieId) {
+    this._moviePresenter.popup.id = movieId;
+    this._moviePresenter.popup.presenter = this._moviePresenter.mainList[movieId] ||
+      this._moviePresenter.topRatedList[movieId] || this._moviePresenter.mostCommentedList[movieId];
+
+    Object
+      .values(this._moviePresenter.mainList)
+      .forEach((presenter) => presenter.resetView());
+
+    Object
+      .values(this._moviePresenter.topRatedList)
+      .forEach((presenter) => presenter.resetView());
+
+    Object
+      .values(this._moviePresenter.mostCommentedList)
+      .forEach((presenter) => presenter.resetView());
+  }
+
+  _handleViewAction(actionType, updateType, update) {
+    switch (actionType) {
+      case UserAction.UPDATE_MOVIE: {
+        this._api.updateMovie(update)
+          .then((response) => this._moviesModel.update(updateType, response));
+        break;
+      }
+      case UserAction.DELETE_COMMENT: {
+        this._moviesModel.update(updateType, update);
+        break;
+      }
+      case UserAction.ADD_COMMENT: {
+        this._moviesModel.update(updateType, update);
+        break;
+      }
+    }
+  }
+
+  _handleModelEvent(updateType, update) {
+    if (update && this._moviePresenter.popup.id === update.id) {
+      this._moviePresenter.popup.presenter.init(update);
+    }
+
+    switch (updateType) {
+      case UpdateType.PATCH: {
+        this._updateMovie(update);
+        this._clearMostCommentedList();
+        this._renderMostCommentedMovies();
+        break;
+      }
+      case UpdateType.MINOR: {
+        this._rerender();
+        break;
+      }
+      case UpdateType.MAJOR: {
+        this._rerender(true, true);
+        break;
+      }
+      case UpdateType.INIT: {
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._render();
+      }
     }
   }
 }

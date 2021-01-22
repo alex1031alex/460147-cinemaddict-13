@@ -85,16 +85,6 @@ export default class Movie {
     }
   }
 
-  _openPopup() {
-    append(page, this._popupComponent);
-    page.classList.add(OVERFLOW_HIDE_CLASS);
-  }
-
-  _closePopup() {
-    this._popupComponent.getElement().remove();
-    page.classList.remove(OVERFLOW_HIDE_CLASS);
-  }
-
   resetView() {
     if (this._mode !== Mode.DEFAULT) {
       this._closePopup();
@@ -104,6 +94,25 @@ export default class Movie {
 
       this._popupCloseHandler();
     }
+  }
+
+  setAborting() {
+    const resetPopupState = () => {
+      this._popupComponent.updateLocalData({isDisabled: false, deletingCommentId: null});
+      this._popupComponent.moveScrollDown();
+    };
+
+    this._popupComponent.shake(resetPopupState);
+  }
+
+  _openPopup() {
+    append(page, this._popupComponent);
+    page.classList.add(OVERFLOW_HIDE_CLASS);
+  }
+
+  _closePopup() {
+    this._popupComponent.getElement().remove();
+    page.classList.remove(OVERFLOW_HIDE_CLASS);
   }
 
   _escKeyDownHandler(evt) {
@@ -210,15 +219,6 @@ export default class Movie {
       .catch(() => {
         this.setAborting();
       });
-  }
-
-  setAborting() {
-    const resetPopupState = () => {
-      this._popupComponent.updateLocalData({isDisabled: false, deletingCommentId: null});
-      this._popupComponent.moveScrollDown();
-    };
-
-    this._popupComponent.shake(resetPopupState);
   }
 
   _handleModelEvent(userAction, updatedMovie) {
