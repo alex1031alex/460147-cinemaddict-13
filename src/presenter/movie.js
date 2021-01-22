@@ -15,11 +15,11 @@ const Mode = {
 const page = document.querySelector(`body`);
 
 export default class Movie {
-  constructor(container, changeData, changeMode, onPopupClose, api) {
+  constructor(container, changeData, changeMode, popupCloseHandler, api) {
     this._container = container;
     this._changeData = changeData;
     this._changeMode = changeMode;
-    this._onPopupClose = onPopupClose;
+    this._popupCloseHandler = popupCloseHandler;
     this._api = api;
 
     this._movieComponent = null;
@@ -102,7 +102,7 @@ export default class Movie {
       document.removeEventListener(`keydown`, this._handleFormSubmit);
       this._mode = Mode.DEFAULT;
 
-      this._onPopupClose();
+      this._popupCloseHandler();
     }
   }
 
@@ -114,7 +114,7 @@ export default class Movie {
       document.removeEventListener(`keydown`, this._handleFormSubmit);
       this._mode = Mode.DEFAULT;
 
-      this._onPopupClose();
+      this._popupCloseHandler();
     }
   }
 
@@ -137,7 +137,7 @@ export default class Movie {
     document.removeEventListener(`keydown`, this._handleFormSubmit);
     this._mode = Mode.DEFAULT;
 
-    this._onPopupClose();
+    this._popupCloseHandler();
   }
 
   _handleWatchlistClick() {
