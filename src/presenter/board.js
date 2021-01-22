@@ -56,7 +56,7 @@ export default class Board {
 
   init() {
     render(this._boardContainer, this._boardComponent, RenderPosition.BEFOREEND);
-    this._renderBoard();
+    this._render();
   }
 
   _getMovies() {
@@ -133,17 +133,17 @@ export default class Board {
         break;
       }
       case UpdateType.MINOR: {
-        this._rerenderBoard();
+        this._rerender();
         break;
       }
       case UpdateType.MAJOR: {
-        this._rerenderBoard(true, true);
+        this._rerender(true, true);
         break;
       }
       case UpdateType.INIT: {
         this._isLoading = false;
         remove(this._loadingComponent);
-        this._renderBoard();
+        this._render();
       }
     }
   }
@@ -192,7 +192,7 @@ export default class Board {
     this._moviePresenter.mostCommentedList = {};
   }
 
-  _clearBoard() {
+  _clear() {
     this._clearMainList();
     remove(this._showMoreButtonComponent);
 
@@ -200,8 +200,8 @@ export default class Board {
     this._clearMostCommentedList();
   }
 
-  _rerenderBoard(resetRenderedMovieCount = false, resetSortType = false) {
-    this._clearBoard();
+  _rerender(resetRenderedMovieCount = false, resetSortType = false) {
+    this._clear();
 
     if (resetRenderedMovieCount) {
       this._renderedMoviesCount = MOVIE_COUNT_PER_STEP;
@@ -213,7 +213,7 @@ export default class Board {
       this._currentSortType = SortType.DEFAULT;
     }
 
-    this._renderBoard();
+    this._render();
   }
 
   _handleSortTypeChange(sortType) {
@@ -340,7 +340,7 @@ export default class Board {
     });
   }
 
-  _renderBoard() {
+  _render() {
     if (this._isLoading) {
       this._renderLoading();
       return;
