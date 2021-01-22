@@ -25,7 +25,7 @@ const PageTitle = {
 const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 const siteFooter = document.querySelector(`.footer`);
-const titleElement = document.querySelector(`.header__logo`);
+const pageTitle = document.querySelector(`.header__logo`);
 
 const api = new Api(END_POINT, AUTHORIZATION);
 const store = new Store(STORE_NAME, window.localStorage);
@@ -94,7 +94,7 @@ window.addEventListener(`load`, () => {
 });
 
 window.addEventListener(`online`, () => {
-  titleElement.textContent = PageTitle.ONLINE;
+  pageTitle.textContent = PageTitle.ONLINE;
 
   if (apiWithProvider.isSyncronizationNeeded) {
     apiWithProvider.sync();
@@ -102,5 +102,5 @@ window.addEventListener(`online`, () => {
 });
 
 window.addEventListener(`offline`, () => {
-  titleElement.textContent = PageTitle.OFFLINE;
+  pageTitle.textContent = PageTitle.OFFLINE;
 });
