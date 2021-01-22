@@ -17,13 +17,15 @@ const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
 const STORE_PREFIX = `cinemaddict-cache`;
 const STORE_VER = `v13`;
 const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
-const PAGE_TITLE_ONLINE = `Cinemaddict`;
-const PAGE_TITLE_OFFLINE = `Cinemaddict [offline]`;
+const PageTitle = {
+  ONLINE: `Cinemaddict`,
+  OFFLINE: `Cinemaddict [offline]`
+};
 
 const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 const siteFooter = document.querySelector(`.footer`);
-const titleElement = document.querySelector(`.header__logo`);
+const pageTitle = document.querySelector(`.header__logo`);
 
 const api = new Api(END_POINT, AUTHORIZATION);
 const store = new Store(STORE_NAME, window.localStorage);
@@ -32,14 +34,15 @@ const apiWithProvider = new Provider(api, store);
 const moviesModel = new MoviesModel();
 const filterModel = new FilterModel();
 
-const userProfilePresenter = new UserProfilePresenter(siteHeader, moviesModel);
-userProfilePresenter.init();
-
 let statsComponent = null;
 let counterComponent = null;
-
 const menuComponent = new MenuView();
+
+const userProfilePresenter = new UserProfilePresenter(siteHeader, moviesModel);
+
+userProfilePresenter.init();
 render(siteMain, menuComponent, RenderPosition.BEFOREEND);
+
 const siteNavigation = siteMain.querySelector(`.main-navigation`);
 
 const boardPresenter = new BoardPresenter(siteMain, moviesModel, filterModel, apiWithProvider);
@@ -91,7 +94,7 @@ window.addEventListener(`load`, () => {
 });
 
 window.addEventListener(`online`, () => {
-  titleElement.textContent = PAGE_TITLE_ONLINE;
+  pageTitle.textContent = PageTitle.ONLINE;
 
   if (apiWithProvider.isSyncronizationNeeded) {
     apiWithProvider.sync();
@@ -99,5 +102,5 @@ window.addEventListener(`online`, () => {
 });
 
 window.addEventListener(`offline`, () => {
-  titleElement.textContent = PAGE_TITLE_OFFLINE;
+  pageTitle.textContent = PageTitle.OFFLINE;
 });

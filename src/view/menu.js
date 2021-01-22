@@ -21,6 +21,11 @@ export default class Menu extends AbstractView {
     return createMenuTemplate();
   }
 
+  setClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().addEventListener(`click`, this._clickHandler);
+  }
+
   _clickHandler(evt) {
     evt.preventDefault();
     if (evt.target.tagName !== `A`) {
@@ -40,10 +45,5 @@ export default class Menu extends AbstractView {
 
     statsButton.classList.toggle(ACTIVE_CLASS);
     this._callback.click(evt.target.dataset.type);
-  }
-
-  setClickHandler(callback) {
-    this._callback.click = callback;
-    this.getElement().addEventListener(`click`, this._clickHandler);
   }
 }

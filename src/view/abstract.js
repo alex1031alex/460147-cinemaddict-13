@@ -1,6 +1,11 @@
-import {createElement} from "../utils/render.js";
-
 const SHAKE_ANIMATION_TIMEOUT = 600;
+
+const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstChild;
+};
 
 export default class Abstract {
   constructor() {

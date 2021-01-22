@@ -39,12 +39,8 @@ export default class UserProfile {
     remove(prevUserProfileComponent);
   }
 
-  _handleModelEvent() {
-    if (this._currentUserRank === this._getUserRank()) {
-      return;
-    }
-
-    this.init();
+  getCurrentUserRank() {
+    return this._currentUserRank;
   }
 
   _getUserRank() {
@@ -67,7 +63,11 @@ export default class UserProfile {
     return null;
   }
 
-  getCurrentUserRank() {
-    return this._currentUserRank;
+  _handleModelEvent() {
+    if (this._currentUserRank === this._getUserRank()) {
+      return;
+    }
+
+    this.init();
   }
 }

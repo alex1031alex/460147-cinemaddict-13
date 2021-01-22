@@ -15,11 +15,11 @@ const Mode = {
 const page = document.querySelector(`body`);
 
 export default class Movie {
-  constructor(container, changeData, changeMode, onPopupClose, api) {
+  constructor(container, changeData, changeMode, popupCloseHandler, api) {
     this._container = container;
     this._changeData = changeData;
     this._changeMode = changeMode;
-    this._onPopupClose = onPopupClose;
+    this._popupCloseHandler = popupCloseHandler;
     this._api = api;
 
     this._movieComponent = null;
@@ -85,6 +85,26 @@ export default class Movie {
     }
   }
 
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._closePopup();
+      document.removeEventListener(`keydown`, this._escKeyDownHandler);
+      document.removeEventListener(`keydown`, this._handleFormSubmit);
+      this._mode = Mode.DEFAULT;
+
+      this._popupCloseHandler();
+    }
+  }
+
+  setAborting() {
+    const resetPopupState = () => {
+      this._popupComponent.updateLocalData({isDisabled: false, deletingCommentId: null});
+      this._popupComponent.moveScrollDown();
+    };
+
+    this._popupComponent.shake(resetPopupState);
+  }
+
   _openPopup() {
     append(page, this._popupComponent);
     page.classList.add(OVERFLOW_HIDE_CLASS);
@@ -95,17 +115,6 @@ export default class Movie {
     page.classList.remove(OVERFLOW_HIDE_CLASS);
   }
 
-  resetView() {
-    if (this._mode !== Mode.DEFAULT) {
-      this._closePopup();
-      document.removeEventListener(`keydown`, this._escKeyDownHandler);
-      document.removeEventListener(`keydown`, this._handleFormSubmit);
-      this._mode = Mode.DEFAULT;
-
-      this._onPopupClose();
-    }
-  }
-
   _escKeyDownHandler(evt) {
     if (isKeyEscape(evt.key)) {
       evt.preventDefault();
@@ -114,7 +123,7 @@ export default class Movie {
       document.removeEventListener(`keydown`, this._handleFormSubmit);
       this._mode = Mode.DEFAULT;
 
-      this._onPopupClose();
+      this._popupCloseHandler();
     }
   }
 
@@ -137,7 +146,7 @@ export default class Movie {
     document.removeEventListener(`keydown`, this._handleFormSubmit);
     this._mode = Mode.DEFAULT;
 
-    this._onPopupClose();
+    this._popupCloseHandler();
   }
 
   _handleWatchlistClick() {
@@ -210,15 +219,6 @@ export default class Movie {
       .catch(() => {
         this.setAborting();
       });
-  }
-
-  setAborting() {
-    const resetPopupState = () => {
-      this._popupComponent.updateLocalData({isDisabled: false, deletingCommentId: null});
-      this._popupComponent.moveScrollDown();
-    };
-
-    this._popupComponent.shake(resetPopupState);
   }
 
   _handleModelEvent(userAction, updatedMovie) {

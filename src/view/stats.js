@@ -252,6 +252,11 @@ export default class Stats extends SmartView {
     return crateStatsTemplate(this._localData);
   }
 
+  restoreHandlers() {
+    this._setInnerHandler();
+    this._setChart();
+  }
+
   _filterChangeHandler(evt) {
     evt.preventDefault();
     const newFilter = evt.target.value;
@@ -270,11 +275,6 @@ export default class Stats extends SmartView {
     this.getElement()
       .querySelector(`.statistic__filters`)
       .addEventListener(`change`, this._filterChangeHandler);
-  }
-
-  restoreHandlers() {
-    this._setInnerHandler();
-    this._setChart();
   }
 
   _setChart() {
