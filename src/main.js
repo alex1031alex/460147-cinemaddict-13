@@ -17,8 +17,10 @@ const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict`;
 const STORE_PREFIX = `cinemaddict-cache`;
 const STORE_VER = `v13`;
 const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
-const PAGE_TITLE_ONLINE = `Cinemaddict`;
-const PAGE_TITLE_OFFLINE = `Cinemaddict [offline]`;
+const PageTitle = {
+  ONLINE: `Cinemaddict`,
+  OFFLINE: `Cinemaddict [offline]`
+};
 
 const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
@@ -92,7 +94,7 @@ window.addEventListener(`load`, () => {
 });
 
 window.addEventListener(`online`, () => {
-  titleElement.textContent = PAGE_TITLE_ONLINE;
+  titleElement.textContent = PageTitle.ONLINE;
 
   if (apiWithProvider.isSyncronizationNeeded) {
     apiWithProvider.sync();
@@ -100,5 +102,5 @@ window.addEventListener(`online`, () => {
 });
 
 window.addEventListener(`offline`, () => {
-  titleElement.textContent = PAGE_TITLE_OFFLINE;
+  titleElement.textContent = PageTitle.OFFLINE;
 });
