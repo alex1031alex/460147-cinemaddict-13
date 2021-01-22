@@ -36,14 +36,6 @@ export const render = (container, element, place) => {
   }
 };
 
-export const renderTemplate = (container, template, place) => {
-  if (container instanceof Abstract) {
-    container = container.getElement();
-  }
-
-  container.insertAdjacentHTML(place, template);
-};
-
 export const append = (parent, child) => {
   if (parent instanceof Abstract) {
     parent = parent.getElement();
