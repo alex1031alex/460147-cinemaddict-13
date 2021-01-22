@@ -32,14 +32,15 @@ const apiWithProvider = new Provider(api, store);
 const moviesModel = new MoviesModel();
 const filterModel = new FilterModel();
 
-const userProfilePresenter = new UserProfilePresenter(siteHeader, moviesModel);
-userProfilePresenter.init();
-
 let statsComponent = null;
 let counterComponent = null;
-
 const menuComponent = new MenuView();
+
+const userProfilePresenter = new UserProfilePresenter(siteHeader, moviesModel);
+
+userProfilePresenter.init();
 render(siteMain, menuComponent, RenderPosition.BEFOREEND);
+
 const siteNavigation = siteMain.querySelector(`.main-navigation`);
 
 const boardPresenter = new BoardPresenter(siteMain, moviesModel, filterModel, apiWithProvider);
