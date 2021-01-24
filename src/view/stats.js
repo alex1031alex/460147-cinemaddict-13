@@ -64,7 +64,7 @@ const getTopGenre = (movies) => {
 
 const renderChart = (ctx, movies) => {
   if (movies.length === 0) {
-    return;
+    return false;
   }
 
   const BAR_HEIGHT = 50;
@@ -82,7 +82,7 @@ const renderChart = (ctx, movies) => {
 
   ctx.height = BAR_HEIGHT * Object.values(labels).length;
 
-  const myChart = new Chart(ctx, {
+  return new Chart(ctx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
