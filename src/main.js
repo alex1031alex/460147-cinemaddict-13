@@ -55,7 +55,7 @@ const handleMenuClick = (menuItem) => {
     return;
   }
 
-  let prevStatsComponent = statsComponent;
+  const prevStatsComponent = statsComponent;
   const watchedMovies = moviesModel.get().filter((movie) => movie.userInfo.isWatched);
   const currentUserRank = userProfilePresenter.getCurrentUserRank();
   statsComponent = new StatsView(watchedMovies, currentUserRank);
