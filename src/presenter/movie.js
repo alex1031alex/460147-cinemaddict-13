@@ -239,7 +239,7 @@ export default class Movie {
                 {},
                 this._movie,
                 {
-                  comments: this._commentsModel.get().slice()
+                  comments: this._commentsModel.get().map((comment) => comment.id)
                 }
             )
         );
